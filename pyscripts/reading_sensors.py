@@ -1,4 +1,3 @@
-# Last version on device!!
 import sys
 import json
 import Adafruit_BBIO.ADC as ADC
@@ -14,9 +13,8 @@ def read_pins():
     value1 = ADC.read("P9_40") # AIN1
     #value = ADC.read_raw("P9_40") # AIN1
     value2 = ADC.read("P9_37") # AIN2
-    
+    # "thumb"       "palm"      "side-hand"
     return {"ain0":100*round(value0,2), "ain1":100*round(value1,2), "ain2":100*round(value2,2)}
-
 
 def main_read_sensors(filename):
     ''' Loop to iterate through the readings and write '''
@@ -24,7 +22,7 @@ def main_read_sensors(filename):
         with open(file_name, 'w') as file:
             while True:
                 output = read_pins()
-                out_dump =json.dumps(output)
+                out_dump =json.dumps(output, sort_keys=True, indent=4, separators=(',', ': '))
                 file.write(out_dump)
                 #print(out_dump)
                 time.sleep(0.1)
