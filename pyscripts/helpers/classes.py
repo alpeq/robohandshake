@@ -144,6 +144,7 @@ class SensorStatus(Subject):
                 self._state, dict_out = read_pins()
                 out_dump = json.dumps(dict_out, sort_keys=True, indent=4, separators=(',', ': '))
                 file.write(out_dump)
+                file.write(',')
                 for sensor in self._state:
                     if sensor > 25:
                         break_flag = True
