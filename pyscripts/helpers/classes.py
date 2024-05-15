@@ -66,13 +66,13 @@ Side = 2
 
 def read_pins():
     ''' Function to read pins from the board '''
-    value0 = ADC.read("P9_39") # AIN0
-    #value = ADC.read_raw("P9_39") # AIN0
-    value1 = ADC.read("P9_40") # AIN1
-    #value = ADC.read_raw("P9_40") # AIN1
-    value2 = ADC.read("P9_37") # AIN2
+    value0 = 100*round(ADC.read("P9_39"),2) # AIN0
+    #value = 100*round(ADC.read_raw("P9_39") # AIN0
+    value1 = 100*round(ADC.read("P9_40"),2) # AIN1
+    #value = 100*round(ADC.read_raw("P9_40") # AIN1
+    value2 = 100*round(ADC.read("P9_37"),2) # AIN2
     # "thumb"       "palm"      "side-hand"
-    return [value0, value1, value2], {"ain0":100*round(value0,2), "ain1":100*round(value1,2), "ain2":100*round(value2,2)}
+    return [value0, value1, value2], {"ain0":value0, "ain1":value1, "ain2":value2}
 
 class Subject(ABC):
     """
@@ -156,7 +156,7 @@ class SensorStatus(Subject):
 class MotorClamp(Observer):
     def __init__(self, goal_open, goal_closed):
         #self.motor_handle = None
-        self.port_handler, self.packet_handler =  self.self.setup_motor()
+        self.portHandler, self.packetHandler =  self.setup_motor()
         self.open = goal_open
         self.close = goal_closed
         self.flag_change = False
@@ -205,12 +205,12 @@ class MotorClamp(Observer):
         else:
             print("Dynamixel has been successfully connected")
         # Acceleration and velocity user friendly profile
-        dxl_comm_result, dxl_error = packetHandler.write4ByteTxRx(portHandler, ID, ADDR_PROFILE_ACCELERATION, 3)
+        dxl_comm_result, dxl_error = packetHandler.write4ByteTxRx(portHandler, DXL_ID, ADDR_PROFILE_ACCELERATION, 3)
         if dxl_comm_result != COMM_SUCCESS:
             print("%s" % packetHandler.getTxRxResult(dxl_comm_result))
         elif dxl_error != 0:
             print("%s" % packetHandler.getRxPacketError(dxl_error))
-        dxl_comm_result, dxl_error = packetHandler.write4ByteTxRx(portHandler, ID, ADDR_PROFILE_VELOCITY, 30)
+        dxl_comm_result, dxl_error = packetHandler.write4ByteTxRx(portHandler, DXL_ID, ADDR_PROFILE_VELOCITY, 40)
         if dxl_comm_result != COMM_SUCCESS:
             print("%s" % packetHandler.getTxRxResult(dxl_comm_result))
         elif dxl_error != 0:
@@ -246,7 +246,7 @@ class MotorClamp(Observer):
             elif dxl_error != 0:
                 print("%s" % self.packetHandler.getRxPacketError(dxl_error))
 
-            print("[ID:%03d] GoalPos:%03d  PresPos:%03d" % (DXL_ID, dxl_goal_position[index], dxl_present_position))
+            print("[ID:%03d] GoalPos:%03d  PresPos:%03d" % (DXL_ID, goal, dxl_present_position))
 
             if abs(goal - dxl_present_position) <= DXL_MOVING_STATUS_THRESHOLD:
                 break
