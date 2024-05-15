@@ -5,6 +5,13 @@ Open_goal = 1600
 
 
 def main():
+    # Check if filename is provided as an argument
+    if len(sys.argv) != 2:
+        print("Usage: python script_name.py <file_name>")
+        sys.exit(1)
+
+    file_name = sys.argv[1]  # Get the file name from command line arguments
+
     ''' Handshake Protocol '''
     while 1:
         print("Press any key to start the protocol! (or press ESC to quit!)")
@@ -12,7 +19,7 @@ def main():
             break
         # The client code.
 
-        handsense_topic = SensorStatus()
+        handsense_topic = SensorStatus(file_name)
         handaction_sub = MotorClamp(Closed_goal, Open_goal)
         handsense_topic.attach(handaction_sub)
 
