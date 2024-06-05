@@ -38,6 +38,9 @@ def main():
         print("To Open Position: My pleasure!")
         # Open hand to init
         handmotor_sub.move_motor_to_goal(Open_goal)
+        print("Release me!")
+        handmotor_sub.wait_til_condition([Side], [0])
+
 
     handsense_topic.clean_sensor_reading()
     sensor.join()

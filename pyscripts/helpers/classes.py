@@ -147,13 +147,19 @@ class SensorStatus(Subject):
         """
         with open(self.fname, 'a') as file:
             while True and self._reading_flag:
-                self._state, dict_out = read_pins()
+                readings, dict_out = read_pins()
                 out_dump = json.dumps(dict_out, sort_keys=True, indent=4, separators=(',', ': '))
                 file.write(out_dump)
                 file.write(',')
-                for sensor in self._state:
-                    if sensor > 25:
-                        self.notify()
+                # States to notify
+                for sensor in readings: # Conditional notify
+                    if sensor >= 25 and sensor < 50:
+                        self._state = 1
+                    elif sensor >= 50:
+                        self._state = 2
+                    else:
+                        self._state = 0
+                self.notify()
                 # print(out_dump)
                 time.sleep(0.1)
 
@@ -168,15 +174,9 @@ class MotorClamp(Observer):
         self.flag_change = False
         self.debug = debug
     def update(self, subject: Subject) -> None:
-        for i, reading in enumerate(subject._state):
-            if self.debug:
-                print("Change notified: {}:{}".format(i,reading))
-            if reading >= 25 and reading < 50:
-                self.state_sensors[i] = 1
-            elif reading >= 50 :
-                self.state_sensors[i] = 2
-            else:
-                self.state_sensors[i] = 0
+        self.state_sensors = subject._state
+        if self.debug:
+            print("Change notified: {}".format(self.state_sensors))
         #print("Thumb state has changed to: {}".format(str(subject._state[Thumb])))
         #print("Palm state has changed to: {}".format(str(subject._state[Palm])))
         #print("Side state has changed to: {}".format(str(subject._state[Side])))
