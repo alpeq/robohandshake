@@ -19,21 +19,23 @@ def main():
 
     # Setup motor-sensor
     handsense_topic = SensorStatus(file_name)
-    handaction_sub = MotorClamp(Closed_goal, Open_goal)
-    handsense_topic.attach(handaction_sub)
+    handmotor_sub = MotorClamp(Closed_goal, Open_goal)
+    handsense_topic.attach(handmotor_sub)
 
     ''' Handshake Protocol '''
+    handsense_topic.start_sensor_reading()
     while 1:
+        # Wait until somebody grab the hand ( side or palm activated )
+        handmotor_sub.wait_til_condition([Side, Palm], [1,2])
+        # Close the hand until touch in thumb
+        handmotor_sub.move_motor_til_signal(Closed_goal-100,Thumb)
+        # Wait until increase in the pressure or release
+        handmotor_sub.wait_til_condition([Side], [0,2])
+        # Open hand to init
+        handmotor_sub.move_motor_to_goal(Open_goal)
 
-        # handaction --> Open clamp and wait for sensor input
-        handsense_topic.read_sensor_logic()
-        time.sleep(1)
-        # handaction --> close clamp and shake until intense pressure
-        handsense_topic.read_sensor_logic()
-        # handaction --> open clamp and feedback audio?
-    
+    handsense_topic.clean_sensor_reading()
     handaction_sub.cleanup_motor()
-
 
 if __name__ == '__main__':
     main()

@@ -119,6 +119,12 @@ class SensorStatus(Subject):
         self._state: List[int] = [0,0,0]    # int state of each of the sensors [0] neutral - [1] touched -  [2] intense pressure
         self._observers: List[Observer] = []
         self.fname = file_name
+        self._reading_flag = True
+    def clean_sensor_reading(self):
+        self._reading_flag = False
+    def activate_sensor_reading(self):
+        self._reading_flag = True
+
     def attach(self, observer: Observer) -> None:
         print("Subject: Attached an observer.")
         self._observers.append(observer)
@@ -134,25 +140,22 @@ class SensorStatus(Subject):
         for observer in self._observers:
             observer.update(self)
 
-    def read_sensor_logic(self) -> None:
+    def start_sensor_reading(self) -> None:
         """
         Loop to read sensors
         """
-        break_flag = False
         with open(self.fname, 'a') as file:
-            while True:
+            while True and self._reading_flag:
                 self._state, dict_out = read_pins()
                 out_dump = json.dumps(dict_out, sort_keys=True, indent=4, separators=(',', ': '))
                 file.write(out_dump)
                 file.write(',')
                 for sensor in self._state:
                     if sensor > 25:
-                        break_flag = True
+                        self.notify()
                 # print(out_dump)
-                if break_flag:
-                    break
                 time.sleep(0.1)
-        self.notify()
+
 
 class MotorClamp(Observer):
     def __init__(self, goal_open, goal_closed):
@@ -160,18 +163,20 @@ class MotorClamp(Observer):
         self.portHandler, self.packetHandler =  self.setup_motor()
         self.open = goal_open
         self.close = goal_closed
+        self.state_sensors = [0, 0, 0]
         self.flag_change = False
     def update(self, subject: Subject) -> None:
-        print("Thumb state has changed to: {}".format(str(subject._state[Thumb])))
-        print("Palm state has changed to: {}".format(str(subject._state[Palm])))
-        print("Side state has changed to: {}".format(str(subject._state[Side])))
-        print("Send motor command according to this info ****  \n")
-        if self.flag_change:
-            self.move_motor_to_goal(self.close)
-        else:
-            self.move_motor_to_goal(self.open)
-        self.flag_change = not self.flag_change
-
+        for i, reading in enumerate(subject._state):
+            if reading >= 25 and reading < 50:
+                self.state_sensors[i] = 1
+            elif reading >= 50 :
+                self.state_sensors[i] = 2
+            else:
+                self.state_sensors[i] = 0
+        #print("Thumb state has changed to: {}".format(str(subject._state[Thumb])))
+        #print("Palm state has changed to: {}".format(str(subject._state[Palm])))
+        #print("Side state has changed to: {}".format(str(subject._state[Side])))
+        #print("Send motor command according to this info ****  \n")
 
     def setup_motor(self):
         # Initialize PortHandler and PacketHandler instance
@@ -253,6 +258,43 @@ class MotorClamp(Observer):
                 break
         return
 
+    def move_motor_til_signal(self, goal, index_sensor):
+        ''' The goal is stopped if the internal state_sensor at refered index is changed '''
+        # Write goal position
+        dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler, DXL_ID, ADDR_GOAL_POSITION, goal)
+        if dxl_comm_result != COMM_SUCCESS:
+            print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
+        elif dxl_error != 0:
+            print("%s" % self.packetHandler.getRxPacketError(dxl_error))
+
+        while self.state_sensors[index_sensor] == 0:
+            # Read present position
+            dxl_present_position, dxl_comm_result, dxl_error = self.packetHandler.read4ByteTxRx(self.portHandler, DXL_ID,
+                                                                                           ADDR_PRESENT_POSITION)
+            if dxl_comm_result != COMM_SUCCESS:
+                print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
+            elif dxl_error != 0:
+                print("%s" % self.packetHandler.getRxPacketError(dxl_error))
+
+            print("[ID:%03d] GoalPos:%03d  PresPos:%03d" % (DXL_ID, goal, dxl_present_position))
+
+            if abs(goal - dxl_present_position) <= DXL_MOVING_STATUS_THRESHOLD:
+                break
+        return
+
+    def wait_til_condition(self, index_sensor, state_list):
+        '''
+        @param index_sensor : List of sensor indexes to check
+        @param state_list: List of states to fill the condition
+        '''
+        break_flag = False
+        while 1:
+            for ind in index_sensor:
+                if self.state_sensors[ind] in state_list:
+                    break_flag = True
+            if break_flag:
+                break
+            time.sleep(0.1)
 
 if __name__ == "__main__":
     # The client code.
