@@ -115,11 +115,12 @@ class SensorStatus(Subject):
     """
     SensorStatus is a Subject node that notifies the status of each of the sensors for motor control and logging
     """
-    def __init__(self, file_name):
+    def __init__(self, file_name, debug=False):
         self._state: List[int] = [0,0,0]    # int state of each of the sensors [0] neutral - [1] touched -  [2] intense pressure
         self._observers: List[Observer] = []
         self.fname = file_name
         self._reading_flag = True
+        self.debug = debug
     def clean_sensor_reading(self):
         self._reading_flag = False
     def activate_sensor_reading(self):
@@ -158,15 +159,18 @@ class SensorStatus(Subject):
 
 
 class MotorClamp(Observer):
-    def __init__(self, goal_open, goal_closed):
+    def __init__(self, goal_open, goal_closed, debug=False):
         #self.motor_handle = None
         self.portHandler, self.packetHandler =  self.setup_motor()
         self.open = goal_open
         self.close = goal_closed
         self.state_sensors = [0, 0, 0]
         self.flag_change = False
+        self.debug = debug
     def update(self, subject: Subject) -> None:
         for i, reading in enumerate(subject._state):
+            if self.debug:
+                print("Change notified: {}:{}".format(i,reading))
             if reading >= 25 and reading < 50:
                 self.state_sensors[i] = 1
             elif reading >= 50 :
