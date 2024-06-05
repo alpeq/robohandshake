@@ -18,8 +18,8 @@ def main():
         return
 
     # Setup motor-sensor
-    handsense_topic = SensorStatus(file_name, debug=True)
-    handmotor_sub = MotorClamp(Closed_goal, Open_goal, debug=True)
+    handsense_topic = SensorStatus(file_name, debug=False)
+    handmotor_sub = MotorClamp(Closed_goal, Open_goal, debug=False)
     handsense_topic.attach(handmotor_sub)
 
     ''' Handshake Protocol '''
@@ -36,7 +36,7 @@ def main():
         handmotor_sub.move_motor_til_signal(Closed_goal-200, Thumb)
         print("Close Position: Waitting for a good shake!")
         # Wait until increase in the pressure or release
-        handmotor_sub.wait_til_condition([Side], [0,2])
+        handmotor_sub.wait_til_condition([Side, Palm], [2])
         print("To Open Position: My pleasure!")
         # Open hand to init
         handmotor_sub.move_motor_to_goal(Open_goal)
