@@ -1,3 +1,5 @@
+import time
+
 from helpers.classes import *
 import threading
 
@@ -38,6 +40,7 @@ def main():
         # Wait until increase in the pressure or release
         handmotor_sub.wait_til_condition([Side, Palm], [2])
         print("To Open Position: My pleasure!")
+        time.sleep(1)
         # Open hand to init
         handmotor_sub.move_motor_to_goal(Open_goal)
         print("Release me!")
