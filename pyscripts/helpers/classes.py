@@ -152,13 +152,13 @@ class SensorStatus(Subject):
                 file.write(out_dump)
                 file.write(',')
                 # States to notify
-                for sensor in readings: # Conditional notify
+                for i,sensor in enumerate(readings): # Conditional notify
                     if sensor >= 25 and sensor < 50:
-                        self._state = 1
+                        self._state[i] = 1
                     elif sensor >= 50:
-                        self._state = 2
+                        self._state[i] = 2
                     else:
-                        self._state = 0
+                        self._state[i] = 0
                 self.notify()
                 # print(out_dump)
                 time.sleep(0.1)
