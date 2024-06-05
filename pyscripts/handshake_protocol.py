@@ -1,5 +1,5 @@
 from helpers.classes import *
-import time
+import threading
 
 Closed_goal = 1270
 Open_goal = 1600
@@ -23,18 +23,20 @@ def main():
     handsense_topic.attach(handmotor_sub)
 
     ''' Handshake Protocol '''
-    handsense_topic.start_sensor_reading()
+    sensor = threading.Thread(name="Sensor_Reading", target=handsense_topic.start_sensor_reading)
+    sensor.start()
     while 1:
         # Wait until somebody grab the hand ( side or palm activated )
         handmotor_sub.wait_til_condition([Side, Palm], [1,2])
         # Close the hand until touch in thumb
-        handmotor_sub.move_motor_til_signal(Closed_goal-100,Thumb)
+        handmotor_sub.move_motor_til_signal(Closed_goal-100, Thumb)
         # Wait until increase in the pressure or release
         handmotor_sub.wait_til_condition([Side], [0,2])
         # Open hand to init
         handmotor_sub.move_motor_to_goal(Open_goal)
 
     handsense_topic.clean_sensor_reading()
+    sensor.join()
     handaction_sub.cleanup_motor()
 
 if __name__ == '__main__':
