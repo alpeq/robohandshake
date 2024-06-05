@@ -25,6 +25,8 @@ def main():
     ''' Handshake Protocol '''
     sensor = threading.Thread(name="Sensor_Reading", target=handsense_topic.start_sensor_reading)
     sensor.start()
+    handmotor_sub.move_motor_to_goal(Open_goal)
+
     while 1:
         print("Start: GIVE ME THAT HAND ")
         # Wait until somebody grab the hand ( side or palm activated )
