@@ -1,0 +1,9 @@
+import serial
+
+ser = serial.Serial("/dev/ttyACM0")
+while True:
+  line = ser.readline()
+  the_dict = eval(line.decode().strip())
+  print(line)
+  print(the_dict['palm'])
+  print("******")
