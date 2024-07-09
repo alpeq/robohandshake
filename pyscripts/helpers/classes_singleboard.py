@@ -6,8 +6,8 @@ from typing import List
 
 import sys
 import json
+import Adafruit_BBIO.ADC as ADC
 import time
-import serial
 
 ## Motor
 
@@ -56,18 +56,23 @@ TORQUE_ENABLE               = 1     # Value for enabling the torque
 TORQUE_DISABLE              = 0     # Value for disabling the torque
 DXL_MOVING_STATUS_THRESHOLD = 20    # Dynamixel moving status threshold
 
-# Sensor index
+
+## Sensor
+ADC.setup()
+
 Thumb = 0
 Palm = 1
 Side = 2
 
-ser = serial.Serial("/dev/ttyACM0")
-while True:
-  line = ser.readline()
-  the_dict = eval(line.decode().strip())
-  print(line)
-  print(the_dict['palm'])
-  print("******")
+def read_pins():
+    ''' Function to read pins from the board '''
+    value0 = 100*round(ADC.read("P9_39"),2) # AIN0
+    #value = 100*round(ADC.read_raw("P9_39") # AIN0
+    value1 = 100*round(ADC.read("P9_40"),2) # AIN1
+    #value = 100*round(ADC.read_raw("P9_40") # AIN1
+    value2 = 100*round(ADC.read("P9_37"),2) # AIN2
+    # "thumb"       "palm"      "side-hand"
+    return [value0, value1, value2], {"ain0":value0, "ain1":value1, "ain2":value2}
 
 class Subject(ABC):
     """
@@ -110,13 +115,12 @@ class SensorStatus(Subject):
     """
     SensorStatus is a Subject node that notifies the status of each of the sensors for motor control and logging
     """
-    def __init__(self, file_name, debug=False, serialPort=None):
+    def __init__(self, file_name, debug=False, ):
         self._state: List[int] = [0,0,0]    # int state of each of the sensors [0] neutral - [1] touched -  [2] intense pressure
         self._observers: List[Observer] = []
         self.fname = file_name
         self._reading_flag = True
         self.debug = debug
-        self.serial_port = serial.Serial(serialPort)
     def clean_sensor_reading(self):
         self._reading_flag = False
     def activate_sensor_reading(self):
@@ -142,11 +146,9 @@ class SensorStatus(Subject):
         Loop to read sensors
         """
         with open(self.fname, 'a') as file:
-            while self._reading_flag:
-                line = self.serial_port.readline()
-                sensor_dict = eval(line.decode().strip())
-                readings = 100 * [round(sensor_dict["thumb"],2),round(sensor_dict["palm"],2),round(sensor_dict["side"],2)]
-                out_dump = json.dumps(sensor_dict, sort_keys=True, indent=4, separators=(',', ': '))
+            while True and self._reading_flag:
+                readings, dict_out = read_pins()
+                out_dump = json.dumps(dict_out, sort_keys=True, indent=4, separators=(',', ': '))
                 file.write(out_dump)
                 file.write(',')
                 # States to notify

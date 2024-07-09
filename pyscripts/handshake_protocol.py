@@ -20,7 +20,7 @@ def main():
         return
 
     # Setup motor-sensor
-    handsense_topic = SensorStatus(file_name, debug=False)
+    handsense_topic = SensorStatus(file_name, debug=False, serialPort="/dev/ttyACM0")
     handmotor_sub = MotorClamp(Closed_goal, Open_goal, debug=False)
     handsense_topic.attach(handmotor_sub)
 
