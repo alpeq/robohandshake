@@ -61,13 +61,6 @@ Thumb = 0
 Palm = 1
 Side = 2
 
-ser = serial.Serial("/dev/ttyACM0")
-while True:
-  line = ser.readline()
-  the_dict = eval(line.decode().strip())
-  print(line)
-  print(the_dict['palm'])
-  print("******")
 
 class Subject(ABC):
     """
