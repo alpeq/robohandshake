@@ -135,7 +135,7 @@ class SensorStatus(Subject):
         Loop to read sensors
         """
         with open(self.fname, 'a') as file:
-            while self._reading_flag:
+            while True and self._reading_flag:
                 line = self.serial_port.readline()
                 sensor_dict = eval(line.decode().strip())
                 readings = 100 * [round(sensor_dict["thumb"],2),round(sensor_dict["palm"],2),round(sensor_dict["side"],2)]
@@ -143,7 +143,7 @@ class SensorStatus(Subject):
                 file.write(out_dump)
                 file.write(',')
                 # States to notify
-                for i,sensor in enumerate(readings): # Conditional notify
+                for i, sensor in enumerate(readings): # Conditional notify
                     if sensor >= 25 and sensor < 50:
                         self._state[i] = 1
                     elif sensor >= 50:
