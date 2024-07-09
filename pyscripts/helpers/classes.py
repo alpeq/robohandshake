@@ -138,7 +138,7 @@ class SensorStatus(Subject):
             while True and self._reading_flag:
                 line = self.serial_port.readline()
                 sensor_dict = eval(line.decode().strip())
-                readings = 100 * [round(sensor_dict["thumb"],2),round(sensor_dict["palm"],2),round(sensor_dict["side"],2)]
+                readings = [100 * round(sensor_dict["thumb"],2), 100 * round(sensor_dict["palm"],2), 100 * round(sensor_dict["side"],2)]
                 out_dump = json.dumps(sensor_dict, sort_keys=True, indent=4, separators=(',', ': '))
                 file.write(out_dump)
                 file.write(',')
