@@ -3,8 +3,8 @@ import time
 from helpers.classes import *
 import threading
 
-Closed_goal = 1270
-Open_goal = 1600
+Closed_goal = 1500
+Open_goal = 880
 
 
 def main():

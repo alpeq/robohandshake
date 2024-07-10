@@ -49,7 +49,7 @@ if MY_DXL == 'X_SERIES':
     BAUDRATE                    = 1000000
 
 PROTOCOL_VERSION            = 2.0
-DXL_ID                      = 1
+DXL_ID                      = 13
 DEVICENAME                  = '/dev/ttyUSB0'
 
 TORQUE_ENABLE               = 1     # Value for enabling the torque
