@@ -26,7 +26,7 @@ else:
         return ch
 from dynamixel_sdk import * # Uses Dynamixel SDK library
 
-from motor_params import *
+from .motor_params import *
 # Sensor index
 Thumb = 2
 Palm  = 0
