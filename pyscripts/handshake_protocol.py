@@ -1,11 +1,88 @@
 import time
-
+import math
 from helpers.classes import *
 import threading
 
-Closed_goal = 1500
-Open_goal = 880
+# Motor related values
+Motor_ids = {'shoulder_tilt':11, 'shoulder_roll':12, 'shoulder_pan':16,
+                 'elbow_tilt':14, 'elbow_pan':15, 'wrist_tilt':2, 'wrist_roll':17,
+                 'gripper':13 }
+Grip_closed = 1500
+Grip_Open = 880
+Elbow_relaxed = 1800
+Elbow_mean = 2000
+Elbow_max_amplitude = 800
+Shoulder_up = 2190
+Shoulder_down = 550
 
+def arm_startup_position(handler):
+    handler.move_motor_to_goal(Motor_ids['shoulder_tilt'], Shoulder_up)
+    handler.move_motor_to_goal(Motor_ids['shoulder_roll'], 2048)
+    handler.move_motor_to_goal(Motor_ids['shoulder_pan'], 1018)
+    handler.move_motor_to_goal(Motor_ids['elbow_tilt'], Elbow_mean)
+    handler.move_motor_to_goal(Motor_ids['elbow_pan'], 2020)
+    handler.move_motor_to_goal(Motor_ids['wrist_tilt'], 2650)
+    handler.move_motor_to_goal(Motor_ids['wrist_roll'], 2650)
+    #handler.move_motor_to_goal(Motor_ids['gripper'], Grip_Open)
+
+def arm_closedown_position(handler):
+    handler.move_motor_to_goal(Motor_ids['elbow_tilt'], Elbow_relaxed)
+    handler.move_motor_to_goal(Motor_ids['shoulder_tilt'], Shoulder_down)
+
+def shaking_elbow(handler):
+    ''' Shaking based on elbow tilt axes
+        Oscilation Point to Point with exponentially decrease amplitude
+    '''
+    id_motor = Motor_ids['elbow_tilt']
+    for n in range(8):
+        sign_amp = -1 if n % 2 == 0 else 1
+        amplitude = sign_amp * Elbow_max_amplitude * math.exp(-n/4)
+        handler.move_motor_to_goal(id_motor, Elbow_mean+amplitude)
+        # handler.state_sensors if any in state==2 n = n-3 with max(n,0)
+    return
+
+def handshake_protocol(handmotor_sub):
+    handmotor_sub.move_motor_to_goal(Motor_ids['gripper'], Grip_Open)
+    print("REACHING: GIVE ME THAT HAND ")
+    # Wait until somebody grab the hand -  side or palm in state 1 or 2
+    handmotor_sub.wait_til_condition([Side, Palm], [1, 2])
+    print("CONTACT - Activated Side/Palm - Gripper closing - I grab you yours")
+    # Close the hand until touch in thumb
+    handmotor_sub.move_motor_til_signal(Motor_ids['gripper'], Grip_closed - 200, Thumb)
+    print("CONTACT - Activated Thumb - Shaking")
+    # Inmediatly start the shaking
+    handmotor_sub.setup_motor_register_mode(Motor_ids['shoulder_tilt'], ADDR_GOAL_CURRENT, 30)# Extra shoulder complaince
+    shaking_elbow(handmotor_sub)   # TODO Signal based increase of time points and amplitude
+    print("CONTACT - No Movement - Rapport LOOK AT EYES/ Message ...")
+    time.sleep(0.52)
+    #print("Close Position: Waitting for a good shake!")
+    # Wait until increase in the pressure or release - Side or palm sensors in state 2
+    #handmotor_sub.wait_til_condition([Side, Palm], [2])
+    print("RETURN: Gripper To Open Position: My pleasure!")
+    # Open hand to init
+    handmotor_sub.move_motor_to_goal(Motor_ids['gripper'], Grip_Open)
+    print("RETURN: Release me, otherwise no return!")
+    handmotor_sub.wait_til_condition([Side], [0])
+    # TODO RETURN whole arm at same time?
+    return
+
+def old_protocol(handmotor_sub):
+    print("Start: GIVE ME THAT HAND ")
+    # Wait until somebody grab the hand -  side or palm in state 1 or 2
+    handmotor_sub.wait_til_condition([Side, Palm], [1, 2])
+    print("Activated Side/Palm: I grab you yours")
+    # Close the hand until touch in thumb
+    handmotor_sub.move_motor_til_signal(Grip_closed - 200, Thumb)
+    print("Close Position: Waitting for a good shake!")
+    # Wait until increase in the pressure or release - Side or palm sensors in state 2
+    handmotor_sub.wait_til_condition([Side, Palm], [2])
+    print("To Open Position: My pleasure!")
+    time.sleep(1)
+    # Open hand to init
+    handmotor_sub.move_motor_to_goal(Grip_Open)
+    print("Release me!")
+    handmotor_sub.wait_til_condition([Side], [0])
+    return
 
 def main():
     # Check if filename is provided as an argument
@@ -19,37 +96,32 @@ def main():
     if getch() == chr(0x1b):
         return
 
+    all_motor_ids = list(Motor_ids.values())
+
     # Setup motor-sensor
     handsense_topic = SensorStatus(file_name, debug=False, serialPort="/dev/ttyACM0")
-    handmotor_sub = MotorClamp(Closed_goal, Open_goal, debug=False)
+    handmotor_sub = MotorClamp(all_motor_ids, debug=False)
     handsense_topic.attach(handmotor_sub)
 
     ''' Handshake Protocol '''
     sensor = threading.Thread(name="Sensor_Reading", target=handsense_topic.start_sensor_reading)
     sensor.start()
-    handmotor_sub.move_motor_to_goal(Open_goal)
 
     while 1:
-        print("Start: GIVE ME THAT HAND ")
-        # Wait until somebody grab the hand ( side or palm activated )
-        handmotor_sub.wait_til_condition([Side, Palm], [1,2])
-        print("Activated Side/Palm: I grab you yours")
-        # Close the hand until touch in thumb
-        handmotor_sub.move_motor_til_signal(Closed_goal-200, Thumb)
-        print("Close Position: Waitting for a good shake!")
-        # Wait until increase in the pressure or release
-        handmotor_sub.wait_til_condition([Side, Palm], [2])
-        print("To Open Position: My pleasure!")
-        time.sleep(1)
-        # Open hand to init
-        handmotor_sub.move_motor_to_goal(Open_goal)
-        print("Release me!")
-        handmotor_sub.wait_til_condition([Side], [0])
+        arm_startup_position(handmotor_sub)
+        handshake_protocol(handmotor_sub)
+        arm_closedown_position(handmotor_sub)
 
+        print("****************************************\n"
+              "DO YOU WANT MORE? \n"
+              "Press any key to start the protocol! (or press ESC to quit!) \n"
+              "**************************************** \n")
+        if getch() == chr(0x1b):
+            return
 
     handsense_topic.clean_sensor_reading()
     sensor.join()
-    handaction_sub.cleanup_motor()
+    handaction_sub.cleanup_motor_list(all_motor_ids)
 
 if __name__ == '__main__':
     main()

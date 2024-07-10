@@ -1,18 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from random import randrange
 from typing import List
 
-import sys
 import json
 import time
 import serial
 
 ## Motor
-
 import os
-
 if os.name == 'nt':
     import msvcrt
     def getch():
@@ -28,39 +24,13 @@ else:
         finally:
             termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
         return ch
-import sys, tty, termios
 from dynamixel_sdk import * # Uses Dynamixel SDK library
-from abc import ABC, abstractmethod
 
-fd = sys.stdin.fileno()
-old_settings = termios.tcgetattr(fd)
-#********* DYNAMIXEL Model definition *********
-MY_DXL = 'X_SERIES'       # X430
-
-# Control table address
-if MY_DXL == 'X_SERIES':
-    ADDR_TORQUE_ENABLE          = 64
-    ADDR_GOAL_POSITION          = 116
-    ADDR_PRESENT_POSITION       = 132
-    ADDR_PROFILE_ACCELERATION	= 108
-    ADDR_PROFILE_VELOCITY		= 112
-    DXL_MINIMUM_POSITION_VALUE  = 0         # Refer to the Minimum Position Limit of product eManual
-    DXL_MAXIMUM_POSITION_VALUE  = 4090      # Refer to the Maximum Position Limit of product eManual
-    BAUDRATE                    = 1000000
-
-PROTOCOL_VERSION            = 2.0
-DXL_ID                      = 13
-DEVICENAME                  = '/dev/ttyUSB0'
-
-TORQUE_ENABLE               = 1     # Value for enabling the torque
-TORQUE_DISABLE              = 0     # Value for disabling the torque
-DXL_MOVING_STATUS_THRESHOLD = 20    # Dynamixel moving status threshold
-
+from motor_params import *
 # Sensor index
 Thumb = 2
-Palm = 1
-Side = 0
-
+Palm  = 0
+Side  = 1
 
 class Subject(ABC):
     """
@@ -154,13 +124,11 @@ class SensorStatus(Subject):
                 # print(out_dump)
                 time.sleep(0.1)
 
-
 class MotorClamp(Observer):
-    def __init__(self, goal_open, goal_closed, debug=False):
+    def __init__(self, motor_ids, debug=False):
         #self.motor_handle = None
-        self.portHandler, self.packetHandler =  self.setup_motor()
-        self.open = goal_open
-        self.close = goal_closed
+        self.portHandler, self.packetHandler =  self.setup_motor_comm()
+        [self.setup_motor_init_mode(id) for id in motor_ids]
         self.state_sensors = [0, 0, 0]
         self.flag_change = False
         self.debug = debug
@@ -173,7 +141,7 @@ class MotorClamp(Observer):
         #print("Side state has changed to: {}".format(str(subject._state[Side])))
         #print("Send motor command according to this info ****  \n")
 
-    def setup_motor(self):
+    def setup_motor_comm(self):
         # Initialize PortHandler and PacketHandler instance
         portHandler = PortHandler(DEVICENAME)
         packetHandler = PacketHandler(PROTOCOL_VERSION)
@@ -195,33 +163,44 @@ class MotorClamp(Observer):
             print("Press any key to terminate...")
             getch()
             quit()
+        return portHandler, packetHandler
 
+    def setup_motor_init_mode(self, dxl_id):
         # Enable Dynamixel Torque
-        dxl_comm_result, dxl_error = packetHandler.write1ByteTxRx(portHandler, DXL_ID, ADDR_TORQUE_ENABLE, TORQUE_ENABLE)
+        dxl_comm_result, dxl_error = self.packetHandler.write1ByteTxRx(self.portHandler, dxl_id, ADDR_TORQUE_ENABLE, TORQUE_ENABLE)
         if dxl_comm_result != COMM_SUCCESS:
-            print("%s" % packetHandler.getTxRxResult(dxl_comm_result))
+            print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
             print("SUCCESS")
         elif dxl_error != 0:
-            print("%s" % packetHandler.getRxPacketError(dxl_error))
+            print("%s" % self.packetHandler.getRxPacketError(dxl_error))
         else:
             print("Dynamixel has been successfully connected")
         # Acceleration and velocity user friendly profile
-        dxl_comm_result, dxl_error = packetHandler.write4ByteTxRx(portHandler, DXL_ID, ADDR_PROFILE_ACCELERATION, 3)
+        dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler, dxl_id, ADDR_PROFILE_ACCELERATION, 3)
         if dxl_comm_result != COMM_SUCCESS:
-            print("%s" % packetHandler.getTxRxResult(dxl_comm_result))
+            print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
         elif dxl_error != 0:
-            print("%s" % packetHandler.getRxPacketError(dxl_error))
-        dxl_comm_result, dxl_error = packetHandler.write4ByteTxRx(portHandler, DXL_ID, ADDR_PROFILE_VELOCITY, 40)
+            print("%s" % self.packetHandler.getRxPacketError(dxl_error))
+        dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler, dxl_id, ADDR_PROFILE_VELOCITY, 40)
         if dxl_comm_result != COMM_SUCCESS:
-            print("%s" % packetHandler.getTxRxResult(dxl_comm_result))
+            print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
         elif dxl_error != 0:
-            print("%s" % packetHandler.getRxPacketError(dxl_error))
+            print("%s" % self.packetHandler.getRxPacketError(dxl_error))
+        # Compliance
+        dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler, dxl_id, ADDR_GOAL_CURRENT,
+                                                                       50)
+        if dxl_comm_result != COMM_SUCCESS:
+            print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
+        elif dxl_error != 0:
+            print("%s" % self.packetHandler.getRxPacketError(dxl_error))
+        return
 
-        return portHandler, packetHandler
+    def cleanup_motor_list(self, dxl_id_list):
+        [self.cleanup_motors(dxl_id) for dxl_id in dxl_id_list]
 
-    def cleanup_motor(self):
+    def cleanup_motor(self, dxl_id):
         # Disable Dynamixel Torque
-        dxl_comm_result, dxl_error = self.packetHandler.write1ByteTxRx(self.portHandler, DXL_ID, ADDR_TORQUE_ENABLE, TORQUE_DISABLE)
+        dxl_comm_result, dxl_error = self.packetHandler.write1ByteTxRx(self.portHandler, dxl_id, ADDR_TORQUE_ENABLE, TORQUE_DISABLE)
         if dxl_comm_result != COMM_SUCCESS:
             print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
         elif dxl_error != 0:
@@ -230,9 +209,9 @@ class MotorClamp(Observer):
         # Close port
         self.portHandler.closePort()
 
-    def move_motor_to_goal(self, goal):
+    def move_motor_to_goal(self, dxl_id, goal):
         # Write goal position
-        dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler, DXL_ID, ADDR_GOAL_POSITION, goal)
+        dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler, dxl_id, ADDR_GOAL_POSITION, goal)
         if dxl_comm_result != COMM_SUCCESS:
             print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
         elif dxl_error != 0:
@@ -240,23 +219,23 @@ class MotorClamp(Observer):
 
         while 1:
             # Read present position
-            dxl_present_position, dxl_comm_result, dxl_error = self.packetHandler.read4ByteTxRx(self.portHandler, DXL_ID,
+            dxl_present_position, dxl_comm_result, dxl_error = self.packetHandler.read4ByteTxRx(self.portHandler, dxl_id,
                                                                                            ADDR_PRESENT_POSITION)
             if dxl_comm_result != COMM_SUCCESS:
                 print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
             elif dxl_error != 0:
                 print("%s" % self.packetHandler.getRxPacketError(dxl_error))
 
-            print("[ID:%03d] GoalPos:%03d  PresPos:%03d" % (DXL_ID, goal, dxl_present_position))
+            print("[ID:%03d] GoalPos:%03d  PresPos:%03d" % (dxl_id, goal, dxl_present_position))
 
             if abs(goal - dxl_present_position) <= DXL_MOVING_STATUS_THRESHOLD:
                 break
         return
 
-    def move_motor_til_signal(self, goal, index_sensor):
+    def move_motor_til_signal(self, dxl_id, goal, index_sensor):
         ''' The goal is stopped if the internal state_sensor at refered index is changed '''
         # Write goal position
-        dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler, DXL_ID, ADDR_GOAL_POSITION, goal)
+        dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler, dxl_id, ADDR_GOAL_POSITION, goal)
         if dxl_comm_result != COMM_SUCCESS:
             print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
         elif dxl_error != 0:
@@ -264,14 +243,14 @@ class MotorClamp(Observer):
 
         while self.state_sensors[index_sensor] == 0:
             # Read present position
-            dxl_present_position, dxl_comm_result, dxl_error = self.packetHandler.read4ByteTxRx(self.portHandler, DXL_ID,
+            dxl_present_position, dxl_comm_result, dxl_error = self.packetHandler.read4ByteTxRx(self.portHandler, dxl_id,
                                                                                            ADDR_PRESENT_POSITION)
             if dxl_comm_result != COMM_SUCCESS:
                 print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
             elif dxl_error != 0:
                 print("%s" % self.packetHandler.getRxPacketError(dxl_error))
 
-            print("[ID:%03d] GoalPos:%03d  PresPos:%03d" % (DXL_ID, goal, dxl_present_position))
+            print("[ID:%03d] GoalPos:%03d  PresPos:%03d" % (dxl_id, goal, dxl_present_position))
 
             if abs(goal - dxl_present_position) <= DXL_MOVING_STATUS_THRESHOLD:
                 break
@@ -290,6 +269,16 @@ class MotorClamp(Observer):
             if break_flag:
                 break
             time.sleep(0.1)
+        return
+
+    def setup_motor_register_mode(self, dxl_id, address, value):
+        dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler, dxl_id, address,
+                                                                       value)
+        if dxl_comm_result != COMM_SUCCESS:
+            print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
+        elif dxl_error != 0:
+            print("%s" % self.packetHandler.getRxPacketError(dxl_error))
+        return
 
 if __name__ == "__main__":
     # The client code.
