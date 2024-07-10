@@ -9,6 +9,8 @@ Motor_ids = {'shoulder_tilt':11, 'shoulder_roll':12, 'shoulder_pan':16,
                  'gripper':13 }
 Grip_closed = 1500
 Grip_Open = 880
+Wrist_up = 2820
+Wrist_down = 1530
 Elbow_relaxed = 1800
 Elbow_mean = 2000
 Elbow_max_amplitude = 800
@@ -35,7 +37,13 @@ def shaking_elbow(handler):
     '''
     id_motor = Motor_ids['elbow_tilt']
     for n in range(8):
-        sign_amp = -1 if n % 2 == 0 else 1
+        if n % 2 == 0:
+            wrist_goal = Wrist_up
+            sign_amp = 1
+        else:
+            wrist_goal = Wrist_down
+            sign_amp = -1
+
         amplitude = sign_amp * Elbow_max_amplitude * math.exp(-n/4)
         handler.move_motor_to_goal(id_motor, Elbow_mean+amplitude)
         # handler.state_sensors if any in state==2 n = n-3 with max(n,0)
