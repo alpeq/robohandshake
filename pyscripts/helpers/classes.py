@@ -57,9 +57,9 @@ TORQUE_DISABLE              = 0     # Value for disabling the torque
 DXL_MOVING_STATUS_THRESHOLD = 20    # Dynamixel moving status threshold
 
 # Sensor index
-Thumb = 0
+Thumb = 2
 Palm = 1
-Side = 2
+Side = 0
 
 
 class Subject(ABC):
@@ -144,7 +144,7 @@ class SensorStatus(Subject):
                 file.write(',')
                 # States to notify
                 for i, sensor in enumerate(readings): # Conditional notify
-                    if sensor >= 25 and sensor < 50:
+                    if sensor >= 20 and sensor < 50:
                         self._state[i] = 1
                     elif sensor >= 50:
                         self._state[i] = 2
