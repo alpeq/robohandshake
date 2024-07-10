@@ -13,7 +13,7 @@ Wrist_up = 2820
 Wrist_down = 1530
 Elbow_relaxed = 1800
 Elbow_mean = 2600 # 2000 exp decay shake
-Elbow_max_amplitude = 800
+Elbow_max_amplitude = 200#800
 Shoulder_up = 2190
 Shoulder_down = 550
 
@@ -45,7 +45,7 @@ def shaking_elbow(handler):
             sign_amp = -1
 
         amplitude = sign_amp * Elbow_max_amplitude * math.exp(-n/4)
-        handler.move_motor_to_goal(id_motor, Elbow_mean+amplitude)
+        handler.move_motor_to_goal(id_motor, int(Elbow_mean+amplitude))
         # handler.state_sensors if any in state==2 n = n-3 with max(n,0)
     return
 
