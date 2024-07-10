@@ -188,7 +188,7 @@ class MotorClamp(Observer):
             print("%s" % self.packetHandler.getRxPacketError(dxl_error))
         # Compliance
         dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler, dxl_id, ADDR_GOAL_CURRENT,
-                                                                       50)
+                                                                       200)
         if dxl_comm_result != COMM_SUCCESS:
             print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
         elif dxl_error != 0:
