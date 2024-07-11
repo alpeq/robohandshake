@@ -15,7 +15,7 @@ Wrist_neutral = 2020
 Elbow_relaxed = 1800
 Elbow_mean = 2200 # 2000 exp decay shake
 Elbow_max_amplitude = 300#800
-Shoulder_up = 2100
+Shoulder_up = 2000
 Shoulder_down = 1550
 
 def arm_startup_position(handler):
