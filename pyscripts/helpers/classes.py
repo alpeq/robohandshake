@@ -312,7 +312,7 @@ class MotorClamp(Observer):
             time.sleep(0.1)
         return
 
-    def check_for_condition(self, index_sensor, state_list):
+    def check_for_condition(self, index_sensor, state_list, debug=True):
         '''
         Return True for any of the sensors in any of the conditions listed
         @param index_sensor : List of sensor indexes to check
@@ -320,6 +320,7 @@ class MotorClamp(Observer):
         '''
         condition = False
         for ind in index_sensor:
+            print(self.state_sensors[ind]) if debug else ''
             if self.state_sensors[ind] in state_list:
                 condition = True
         return condition
