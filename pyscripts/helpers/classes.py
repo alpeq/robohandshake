@@ -28,8 +28,8 @@ from dynamixel_sdk import * # Uses Dynamixel SDK library
 
 from .motor_params import *
 # Sensor index
-Thumb = 2
-Palm  = 0
+Thumb = 0
+Palm  = 2
 Side  = 1
 
 class Subject(ABC):
