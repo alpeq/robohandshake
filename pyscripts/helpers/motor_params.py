@@ -28,3 +28,6 @@ DXL_MOVING_STATUS_THRESHOLD = 60    # 40 normal tolerance with specific -Dynamix
 
 ACCELERATION = 8   # 6
 VELOCITY     = 80  # 60
+
+Points_oscilation = 4 # 8
+Tau_oscilation = 2    # 4

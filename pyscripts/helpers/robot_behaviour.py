@@ -63,11 +63,11 @@ def shaking_phase(handler, tactile=False):
     wrist_motor = Motor_ids['wrist_tilt']
     n = 0
     points_cycle = 2
-    while(n < 8):
+    while(n < Points_oscilation):
         n_cycle = math.floor((n-1)/points_cycle)
         print(n)
         sign_amp = 1 if n % 2 == 0 else -1
-        amplitude = sign_amp * Elbow_max_amplitude * math.exp(-n/4)
+        amplitude = sign_amp * Elbow_max_amplitude * math.exp(-n/Tau_oscilation)
         handler.move_motors_to_goals_list([elbow_motor, wrist_motor], [int(Elbow_mean+amplitude), int(Wristtilt_neutral+amplitude)])
         # With touch signals the cycle moves back
         if tactile and handler.check_for_condition([Side, Palm], [4]):
