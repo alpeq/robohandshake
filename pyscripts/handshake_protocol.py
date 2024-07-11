@@ -20,9 +20,11 @@ Shoulder_down = 1550
 
 def arm_startup_position(handler):
     id_list   = [Motor_ids['shoulder_tilt'], Motor_ids['shoulder_roll'], Motor_ids['shoulder_pan'],
-                 Motor_ids['elbow_tilt'], Motor_ids['elbow_pan'], Motor_ids['wrist_tilt'], Motor_ids['wrist_roll'], ]
+                 Motor_ids['elbow_tilt'], Motor_ids['elbow_pan'],
+                 Motor_ids['wrist_tilt'], Motor_ids['wrist_roll'] ]
     goal_list = [Shoulder_up, 2048, 1018,
-                 Elbow_mean, Wrist_neutral, 2650, 2650]
+                 Elbow_mean, 2020,
+                 Wrist_neutral, 2650]
     handler.move_motors_to_goals_list(id_list, goal_list)
     #handler.move_motor_to_goal(Motor_ids['shoulder_tilt'], Shoulder_up)
     #handler.move_motor_to_goal(Motor_ids['shoulder_roll'], 2048)
