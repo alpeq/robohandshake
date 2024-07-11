@@ -6,6 +6,7 @@ Motor_ids = {'neck':3, 'shoulder_tilt':11, 'shoulder_roll':12, 'shoulder_pan':16
                  'elbow_tilt':14, 'elbow_pan':15, 'wrist_tilt':2, 'wrist_roll':17,
                  'gripper':13 }
 Grip_closed = 1500
+Grip_passive = 1100
 Grip_open = 900
 Wristroll_open = 2250
 Wristroll_closed = 2750
@@ -65,6 +66,15 @@ def setup_compliance(handler):
     handler.setup_motor_register_mode(Motor_ids['shoulder_tilt'], ADDR_GOAL_CURRENT, 100)
     handler.setup_motor_register_mode(Motor_ids['wrist_tilt'], ADDR_OPERATING_MODE, 5)  # Complaint mode
     handler.setup_motor_register_mode(Motor_ids['wrist_tilt'], ADDR_GOAL_CURRENT, 50)
+
+def setup_high_compliance(handler):
+    handler.setup_motor_register_mode(Motor_ids['shoulder_tilt'], ADDR_OPERATING_MODE, 5)  # Complaint mode
+    handler.setup_motor_register_mode(Motor_ids['elbow_tilt'], ADDR_OPERATING_MODE, 5)  # Complaint mode
+    handler.setup_motor_register_mode(Motor_ids['wrist_tilt'], ADDR_OPERATING_MODE, 5)  # Complaint mode
+    handler.setup_motor_register_mode(Motor_ids['shoulder_tilt'], ADDR_GOAL_CURRENT, 30)
+    handler.setup_motor_register_mode(Motor_ids['elbow_tilt'], ADDR_GOAL_CURRENT, 50)
+    handler.setup_motor_register_mode(Motor_ids['wrist_tilt'], ADDR_GOAL_CURRENT, 30)
+
 
 def setup_rigid(handler):
     handler.setup_motor_register_mode(Motor_ids['shoulder_tilt'], ADDR_OPERATING_MODE, 3)  # Complaint mode

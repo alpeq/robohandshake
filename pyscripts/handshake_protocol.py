@@ -47,6 +47,11 @@ def handshake_protocol_time(handmotor_sub, wait_user=False):
     opengrip_2dof_thumb(handmotor_sub)
     return
 
+def handshake_protocol_passive(handmotor_sub, wait_user=False):
+    handmotor_sub.move_motor_to_goal(Motor_ids['gripper'], Grip_passive)
+    setup_high_compliance(handmotor_sub)
+    time.sleep(5.52)
+    return
 
 def old_protocol(handmotor_sub):
     print("Start: GIVE ME THAT HAND ")
@@ -69,7 +74,7 @@ def old_protocol(handmotor_sub):
 def main():
     # Check if filename is provided as an argument
     if len(sys.argv) != 3 or sys.argv[2] not in ['tactile', 'time']:
-        print("Usage: python script_name.py <file_name> <tactile|time>")
+        print("Usage: python script_name.py <file_name> <tactile|time|passive>")
         sys.exit(1)
     file_name = sys.argv[1]  # Get the file name from command line arguments
     protocol = sys.argv[2]  # Get the file name from command line arguments
@@ -93,6 +98,8 @@ def main():
             handshake_protocol_tactile(handmotor_sub, wait_user=False)
         elif protocol == "time":
             handshake_protocol_time(handmotor_sub, wait_user=False)
+        elif protocol == "passive":
+            handshake_protocol_passive(handmotor_sub, wait_user=False)
         else:
             print("error")
             return
