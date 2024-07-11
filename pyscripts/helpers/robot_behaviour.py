@@ -18,7 +18,7 @@ Elbow_max_amplitude = 300#800 500
 Shoulder_up   = 2100 #1900
 Shoulder_down = 1550 #1550
 Neck_up   = 2100
-Neck_down = 1600
+Neck_down = 1700
 
 def arm_startup_position(handler):
     id_list = [Motor_ids['neck'],
