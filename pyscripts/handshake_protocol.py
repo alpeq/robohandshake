@@ -215,5 +215,5 @@ def test_sensors():
 
 
 if __name__ == '__main__':
-    test_sensors()
+    #test_sensors()
     main()
