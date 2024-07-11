@@ -95,23 +95,27 @@ def handshake_protocol(handmotor_sub):
     # Wait until somebody grab the hand -  side or palm in state 1 or 2
     #handmotor_sub.wait_til_condition([Side, Palm], [1, 2])
     time.sleep(0.5)
+    wait_user_feedback()
     print("CONTACT - Activated Side/Palm - Gripper closing - I grab you yours")
     # Close the hand until touch in thumb
     #handmotor_sub.move_motor_til_signal(Motor_ids['gripper'], Grip_closed - 200, Thumb)
     handmotor_sub.move_motor_to_goal(Motor_ids['gripper'], Grip_closed)
     time.sleep(0.2)
+    wait_user_feedback()
     print("CONTACT - Activated Thumb - Shaking")
     # Inmediatly start the shaking
     setup_compliance(handmotor_sub)
     shaking_phase(handmotor_sub, tactile=False)   # TODO Signal based increase of time points and amplitude
     print("CONTACT - No Movement - Rapport LOOK AT EYES/ Message ...")
     time.sleep(0.52)
+    wait_user_feedback()
     #print("Close Position: Waitting for a good shake!")
     # Wait until increase in the pressure or release - Side or palm sensors in state 2
     #handmotor_sub.wait_til_condition([Side, Palm], [2])
     print("RETURN: Gripper To Open Position: My pleasure!")
     # Open hand to init
     handmotor_sub.move_motor_to_goal(Motor_ids['gripper'], Grip_Open)
+    wait_user_feedback()
     print("RETURN: Release me, otherwise no return!")
     #handmotor_sub.wait_til_condition([Side], [0])
     return
