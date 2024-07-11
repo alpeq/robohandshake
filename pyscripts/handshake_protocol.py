@@ -207,7 +207,7 @@ def test_sensors():
     # Test
     handsense_topic = SensorStatus(file_name, debug=False, serial_port="/dev/ttyACM0")
     sensor = threading.Thread(name="Sensor_Reading", target=handsense_topic.start_sensor_reading, kwargs={'debug':True})
-
+    sensor.start()
     wait_user_feedback()
 
     handsense_topic.clean_sensor_reading()
