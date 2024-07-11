@@ -57,6 +57,7 @@ def shaking_phase(handler, tactile=False):
     wrist_motor = Motor_ids['wrist_tilt']
     n = 0
     while(n < 8):
+        print(n)
         if n % 2 == 0:
             sign_amp = 1
         else:
@@ -75,11 +76,11 @@ def handshake_protocol_tactile(handmotor_sub, wait_user=False):
     # Wait until somebody grab the hand -  side or palm in state 1 or 2
     handmotor_sub.wait_til_condition([Side, Palm], [1, 2])
     print("CONTACT - Activated Side/Palm - Gripper closing - I grab you yours")
-    _ = wait_user_feedback() if wait_user else ''
+    #_ = wait_user_feedback() if wait_user else ''
     # Close the hand until touch in thumb
-    handmotor_sub.move_motor_til_signal(Motor_ids['gripper'], Grip_closed - 50, Thumb)
+    handmotor_sub.move_motor_til_signal(Motor_ids['gripper'], Grip_closed - 100, Thumb)
     time.sleep(0.2)
-    _ = wait_user_feedback() if wait_user else ''
+    #_ = wait_user_feedback() if wait_user else ''
     print("CONTACT - Activated Thumb - Shaking")
     # start the shaking
     setup_compliance(handmotor_sub)
