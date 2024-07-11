@@ -220,7 +220,7 @@ def test_motors():
     handmotor_sub = MotorClamp(all_motor_ids, debug=False, serial_port="/dev/ttyUSB0")
 
     arm_startup_position(handmotor_sub)
-
+    time.sleep(5)
     while True:
         handmotor_sub.move_motors_to_goals_list([Motor_ids['wrist_roll'], Motor_ids['gripper']], [Wristroll_neutral, Grip_Open])
         time.sleep(2)
