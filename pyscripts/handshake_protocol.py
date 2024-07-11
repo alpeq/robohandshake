@@ -126,9 +126,10 @@ def handshake_protocol(handmotor_sub, wait_user=False):
     return
 
 def wait_user_feedback():
-    print("Press any key to start the protocol! (or press ESC to quit!)")
-    if getch() == chr(0x1b):
-        return
+    print("Press any key to start the protocol! (or press q to quit!)")
+    if getch() == chr(27):
+        return True
+    return False
 
 def old_protocol(handmotor_sub):
     print("Start: GIVE ME THAT HAND ")
@@ -156,7 +157,8 @@ def main():
     file_name = sys.argv[1]  # Get the file name from command line arguments
 
     # Wait to press button
-    wait_user_feedback()
+    if wait_user_feedback():
+        return
 
     # Setup motor-sensor
     all_motor_ids = list(Motor_ids.values())
@@ -174,7 +176,8 @@ def main():
         arm_closedown_position(handmotor_sub)
         print("****************************************\n"
               "DO YOU WANT MORE? \n")
-        wait_user_feedback()
+        if wait_user_feedback():
+            break
 
     handsense_topic.clean_sensor_reading()
     sensor.join()
