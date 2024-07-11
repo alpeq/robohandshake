@@ -232,5 +232,5 @@ def test_motors():
 
 if __name__ == '__main__':
     #test_sensors()
-    test_motors()
+    #test_motors()
     main()
