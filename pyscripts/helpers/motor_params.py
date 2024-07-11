@@ -26,3 +26,5 @@ TORQUE_ENABLE               = 1     # Value for enabling the torque
 TORQUE_DISABLE              = 0     # Value for disabling the torque
 DXL_MOVING_STATUS_THRESHOLD = 60    # 40 normal tolerance with specific -Dynamixel moving status threshold
 
+ACCELERATION = 4   # 3
+VELOCITY     = 50  # 40
