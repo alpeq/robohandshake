@@ -55,43 +55,46 @@ def shaking_phase(handler, tactile=False):
     '''
     elbow_motor = Motor_ids['elbow_tilt']
     wrist_motor = Motor_ids['wrist_tilt']
-    for n in range(8):
+    n = 0
+    while(n < 8):
         if n % 2 == 0:
             sign_amp = 1
         else:
             sign_amp = -1
-
         amplitude = sign_amp * Elbow_max_amplitude * math.exp(-n/4)
         handler.move_motors_to_goals_list([elbow_motor, wrist_motor], [int(Elbow_mean+amplitude), int(Wrist_neutral+amplitude)])
-        #handler.move_motor_to_goal(elbow_motor, int(Elbow_mean+amplitude))
-        #handler.move_motor_to_goal(wrist_motor, wrist_goal)
-        # handler.state_sensors if any in state==2 n = n-3 with max(n,0)
+        if tactile and check_for_condition([Side, Palm],[2]):
+            n = max(n-3,0)
+        else:
+            n += 1
     return
 
-def handshake_protocol_tactile(handmotor_sub):
-    #TOCHECK COPY FROM NO TACTILE
+def handshake_protocol_tactile(handmotor_sub, wait_user=False):
     handmotor_sub.move_motor_to_goal(Motor_ids['gripper'], Grip_Open)
     print("REACHING: GIVE ME THAT HAND ")
     # Wait until somebody grab the hand -  side or palm in state 1 or 2
     handmotor_sub.wait_til_condition([Side, Palm], [1, 2])
     print("CONTACT - Activated Side/Palm - Gripper closing - I grab you yours")
+    _ = wait_user_feedback() if wait_user else ''
     # Close the hand until touch in thumb
-    handmotor_sub.move_motor_til_signal(Motor_ids['gripper'], Grip_closed - 200, Thumb)
+    handmotor_sub.move_motor_til_signal(Motor_ids['gripper'], Grip_closed - 50, Thumb)
+    time.sleep(0.2)
+    _ = wait_user_feedback() if wait_user else ''
     print("CONTACT - Activated Thumb - Shaking")
-    # Inmediatly start the shaking
-    handmotor_sub.setup_motor_register_mode(Motor_ids['shoulder_tilt'], ADDR_GOAL_CURRENT, 30)# Extra shoulder complaince
-    shaking_phase(handmotor_sub, tactile=True)   # TODO Signal based increase of time points and amplitude
+    # start the shaking
+    setup_compliance(handmotor_sub)
+    shaking_phase(handmotor_sub, tactile=True)
     print("CONTACT - No Movement - Rapport LOOK AT EYES/ Message ...")
     time.sleep(0.52)
-    #print("Close Position: Waitting for a good shake!")
+    _ = wait_user_feedback() if wait_user else ''
     # Wait until increase in the pressure or release - Side or palm sensors in state 2
     #handmotor_sub.wait_til_condition([Side, Palm], [2])
     print("RETURN: Gripper To Open Position: My pleasure!")
     # Open hand to init
-    handmotor_sub.move_motor_to_goal(Motor_ids['gripper'], Grip_Open)
     print("RETURN: Release me, otherwise no return!")
     handmotor_sub.wait_til_condition([Side], [0])
-    # TODO RETURN whole arm at same time?
+    handmotor_sub.move_motor_to_goal(Motor_ids['gripper'], Grip_Open)
+    _ = wait_user_feedback() if wait_user else ''
     return
 
 def handshake_protocol(handmotor_sub, wait_user=False):
@@ -174,7 +177,7 @@ def main():
     while 1:
         setup_rigid(handmotor_sub)
         arm_startup_position(handmotor_sub)
-        handshake_protocol(handmotor_sub)
+        handshake_protocol_tactile(handmotor_sub, wait_user=True)
         arm_closedown_position(handmotor_sub)
         print("****************************************\n"
               "DO YOU WANT MORE? \n")

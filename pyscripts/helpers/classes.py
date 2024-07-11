@@ -312,6 +312,18 @@ class MotorClamp(Observer):
             time.sleep(0.1)
         return
 
+    def check_for_condition(self, index_sensor, state_list):
+        '''
+        Return True for any of the sensors in any of the conditions listed
+        @param index_sensor : List of sensor indexes to check
+        @param state_list: List of states to fill the condition
+        '''
+        condition = False
+        for ind in index_sensor:
+            if self.state_sensors[ind] in state_list:
+                condition = True
+        return condition
+
     def setup_motor_register_mode(self, dxl_id, address, value):
         dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler, dxl_id, address,
                                                                        value)
