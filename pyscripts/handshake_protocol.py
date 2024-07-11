@@ -16,7 +16,7 @@ Elbow_relaxed = 1800
 Elbow_mean = 2200 # 2000 exp decay shake
 Elbow_max_amplitude = 400#800 500
 Shoulder_up   = 2100 #1900
-Shoulder_down = 1700 #1550
+Shoulder_down = 1550 #1550
 
 def arm_startup_position(handler):
     id_list   = [Motor_ids['shoulder_tilt'], Motor_ids['shoulder_roll'], Motor_ids['shoulder_pan'],
