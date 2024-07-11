@@ -224,7 +224,7 @@ def test_motors():
     while True:
         handmotor_sub.move_motors_to_goals_list([Motor_ids['wrist_roll'], Motor_ids['gripper']], [Wristroll_neutral, Grip_Open])
         time.sleep(2)
-        handmotor_sub.move_motors_to_goals_list([Motor_ids['wrist_roll'], Motor_ids['gripper']], [Wristroll_neutral-500, Grip_closed])
+        handmotor_sub.move_motors_to_goals_list([Motor_ids['wrist_roll'], Motor_ids['gripper']], [Wristroll_neutral+500, Grip_closed])
         time.sleep(10)
 
 if __name__ == '__main__':
