@@ -11,7 +11,7 @@ Wristroll_open = 2250
 Wristroll_closed = 2750
 #Wrist_up = 2620
 #Wrist_down = 1630
-Wristtilt_neutral = 2320
+Wristtilt_neutral = 2020
 Elbow_relaxed = 1800
 Elbow_mean = 2300 # 2000 exp decay shake
 Elbow_max_amplitude = 300#800 500
@@ -23,7 +23,7 @@ def arm_startup_position(handler):
                  Motor_ids['elbow_tilt'], Motor_ids['elbow_pan'],
                  Motor_ids['wrist_tilt'], Motor_ids['wrist_roll'] ]
     goal_list = [Shoulder_up, 2048, 1018,
-                 Elbow_mean, 2020,
+                 Elbow_mean, 3085,
                  Wristtilt_neutral, Wristroll_open]
     handler.move_motors_to_goals_list(id_list, goal_list)
     return
