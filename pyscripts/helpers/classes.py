@@ -122,8 +122,8 @@ class SensorStatus(Subject):
                         self._state[i] = 0
                 self.notify()
                 if debug:
-                    print(readings)
-                    print(self._state)
+                    print('', readings, "/n")
+                    print('   ',self._state, "/n/n")
                 time.sleep(0.1)
 
 class MotorClamp(Observer):
