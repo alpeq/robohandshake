@@ -50,7 +50,7 @@ def handshake_protocol_time(handmotor_sub, wait_user=False):
 def handshake_protocol_passive(handmotor_sub, wait_user=False):
     handmotor_sub.move_motor_to_goal(Motor_ids['gripper'], Grip_passive)
     setup_high_compliance(handmotor_sub)
-    time.sleep(5.52)
+    time.sleep(10.52)
     return
 
 def old_protocol(handmotor_sub):
