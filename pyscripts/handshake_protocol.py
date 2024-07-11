@@ -13,8 +13,8 @@ Grip_Open = 900
 #Wrist_down = 1630
 Wrist_neutral = 2020
 Elbow_relaxed = 1800
-Elbow_mean = 2200 # 2000 exp decay shake
-Elbow_max_amplitude = 400#800 500
+Elbow_mean = 2300 # 2000 exp decay shake
+Elbow_max_amplitude = 300#800 500
 Shoulder_up   = 2100 #1900
 Shoulder_down = 1550 #1550
 
