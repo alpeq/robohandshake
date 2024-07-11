@@ -289,7 +289,7 @@ class MotorClamp(Observer):
             elif dxl_error != 0:
                 print("%s" % self.packetHandler.getRxPacketError(dxl_error))
 
-        while len(id_list) != 0 or self.state_sensors[index_sensor] == 0:
+        while len(id_list) != 0 and self.state_sensors[index_sensor] == 0:
             if debug:
                 print(self.state_sensors, ' -- ', index_sensor)
             rm_id = []
