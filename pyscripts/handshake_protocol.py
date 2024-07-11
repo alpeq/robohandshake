@@ -9,6 +9,7 @@ Motor_ids = {'shoulder_tilt':11, 'shoulder_roll':12, 'shoulder_pan':16,
                  'gripper':13 }
 Grip_closed = 1430
 Grip_Open = 900
+Wristroll_neutral = 2250
 #Wrist_up = 2620
 #Wrist_down = 1630
 Wrist_neutral = 2020
@@ -220,12 +221,11 @@ def test_motors():
 
     arm_startup_position(handmotor_sub)
 
-    neutral = 2650
     while True:
-        handmotor_sub.move_motor_to_goal(Motor_ids['wrist_roll'], neutral)
-        handmotor_sub.move_motor_to_goal(Motor_ids['wrist_roll'], neutral+100)
-        handmotor_sub.move_motor_to_goal(Motor_ids['wrist_roll'], neutral-100)
-        time.sleep(5)
+        handmotor_sub.move_motors_to_goals_list([Motor_ids['wrist_roll'], Motor_ids['gripper']], [Wristroll_neutral, Grip_Open])
+        time.sleep(2)
+        handmotor_sub.move_motors_to_goals_list([Motor_ids['wrist_roll'], Motor_ids['gripper']], [Wristroll_neutral-500, Grip_closed])
+        time.sleep(10)
 
 if __name__ == '__main__':
     #test_sensors()
