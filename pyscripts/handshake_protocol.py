@@ -128,7 +128,9 @@ def handshake_protocol(handmotor_sub, wait_user=False):
 def wait_user_feedback():
     print("Press any key to start the protocol! (or press q to quit!)")
     if getch() == chr(27):
+        print("IN")
         return True
+    print("OUT")
     return False
 
 def old_protocol(handmotor_sub):
