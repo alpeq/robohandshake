@@ -223,9 +223,11 @@ def test_motors():
     arm_startup_position(handmotor_sub)
     time.sleep(5)
     while True:
-        handmotor_sub.move_motors_to_goals_list([Motor_ids['wrist_roll'], Motor_ids['gripper']], [Wristroll_neutral, Grip_Open])
+        handmotor_sub.move_motors_to_goals_list([Motor_ids['wrist_roll'], Motor_ids['gripper']],
+                                                [Wristroll_neutral, Grip_Open])
         time.sleep(2)
-        handmotor_sub.move_motors_to_goals_list([Motor_ids['wrist_roll'], Motor_ids['gripper']], [Wristroll_neutral+500, Grip_closed])
+        handmotor_sub.move_motors_til_signals_list([Motor_ids['wrist_roll'], Motor_ids['gripper']],
+                                                [Wristroll_neutral+500, Grip_closed], Thumb)
         time.sleep(10)
 
 if __name__ == '__main__':

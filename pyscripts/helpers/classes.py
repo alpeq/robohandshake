@@ -276,6 +276,43 @@ class MotorClamp(Observer):
 
         return
 
+    def move_motors_til_signals_list(self, id_list, goal_list, index_sensor, debug=False):
+        for dxl_id, goal in zip(id_list, goal_list):
+            # Write goal position
+            dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler, dxl_id, ADDR_GOAL_POSITION, goal)
+            if dxl_comm_result != COMM_SUCCESS:
+                print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
+            elif dxl_error != 0:
+                print("%s" % self.packetHandler.getRxPacketError(dxl_error))
+
+        while len(id_list) != 0 or self.state_sensors[index_sensor] == 0:
+            if debug:
+                print(self.state_sensors, ' -- ', index_sensor)
+            rm_id = []
+            rm_goal = []
+            for i, (dxl_id, goal) in enumerate(zip(id_list, goal_list)):
+                # Read present position
+                dxl_present_position, dxl_comm_result, dxl_error = self.packetHandler.read4ByteTxRx(self.portHandler, dxl_id,
+                                                                                               ADDR_PRESENT_POSITION)
+                if dxl_comm_result != COMM_SUCCESS:
+                    print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
+                elif dxl_error != 0:
+                    print("%s" % self.packetHandler.getRxPacketError(dxl_error))
+
+                if debug:
+                    print("[ID:%03d] GoalPos:%03d  PresPos:%03d" % (dxl_id, goal, dxl_present_position))
+
+                if abs(goal - dxl_present_position) <= DXL_MOVING_STATUS_THRESHOLD:
+                    rm_id.append(dxl_id)
+                    rm_goal.append(goal)
+
+            for i,g in zip(rm_id, rm_goal):
+                id_list.remove(i)
+                goal_list.remove(g)
+
+        return
+
+
     def move_motor_til_signal(self, dxl_id, goal, index_sensor, debug=False):
         ''' The goal is stopped if the internal state_sensor at refered index is changed '''
         # Write goal position
