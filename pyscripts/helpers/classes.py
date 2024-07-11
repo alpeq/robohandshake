@@ -127,11 +127,11 @@ class SensorStatus(Subject):
 class MotorClamp(Observer):
     def __init__(self, motor_ids, debug=False, serial_port=None):
         #self.motor_handle = None
+        self.port_name = serial_port
         self.portHandler, self.packetHandler =  self.setup_motor_comm()
         [self.setup_motor_init_mode(id) for id in motor_ids]
         self.state_sensors = [0, 0, 0]
         self.flag_change = False
-        self.port_name = serial_port
         self.debug = debug
     def update(self, subject: Subject) -> None:
         self.state_sensors = subject._state
