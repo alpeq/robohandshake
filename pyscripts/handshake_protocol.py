@@ -7,10 +7,10 @@ import threading
 Motor_ids = {'shoulder_tilt':11, 'shoulder_roll':12, 'shoulder_pan':16,
                  'elbow_tilt':14, 'elbow_pan':15, 'wrist_tilt':2, 'wrist_roll':17,
                  'gripper':13 }
-Grip_closed = 1500
+Grip_closed = 1400
 Grip_Open = 900
-Wrist_up = 2820
-Wrist_down = 1530
+Wrist_up = 2620
+Wrist_down = 1630
 Wrist_neutral = 2020
 Elbow_relaxed = 1800
 Elbow_mean = 2200 # 2000 exp decay shake
@@ -60,8 +60,9 @@ def shaking_phase(handler, tactile=False):
             sign_amp = -1
 
         amplitude = sign_amp * Elbow_max_amplitude * math.exp(-n/4)
-        handler.move_motor_to_goal(elbow_motor, int(Elbow_mean+amplitude))
-        handler.move_motor_to_goal(wrist_motor, wrist_goal)
+        handler.move_motors_to_goals_list([elbow_motor, wrist_motor], [int(Elbow_mean+amplitude), wrist_goal])
+        #handler.move_motor_to_goal(elbow_motor, int(Elbow_mean+amplitude))
+        #handler.move_motor_to_goal(wrist_motor, wrist_goal)
         # handler.state_sensors if any in state==2 n = n-3 with max(n,0)
     return
 
