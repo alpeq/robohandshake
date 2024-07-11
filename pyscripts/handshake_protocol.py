@@ -28,7 +28,7 @@ def handshake_protocol_tactile(handmotor_sub, wait_user=False):
     #handmotor_sub.wait_til_condition([Side, Palm], [2])
     # Open hand to init
     print("RETURN: Release me, otherwise no return!")
-    handmotor_sub.wait_til_condition([Side], [0, 1, 2], debug=False)
+    handmotor_sub.wait_til_condition([Side], [0, 1, 2, 3], debug=False)
     #time.sleep(0.52)
     opengrip_2dof_thumb(handmotor_sub)
     print("RETURN: Gripper To Open Position: My pleasure!")
