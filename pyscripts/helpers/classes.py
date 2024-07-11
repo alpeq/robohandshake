@@ -113,7 +113,7 @@ class SensorStatus(Subject):
                 file.write(out_dump)
                 file.write(',')
                 # States to notify
-                for i, sensor in enumerate(readings): # Conditional notify
+                for i, sensor in enumerate(readings):
                     if sensor >= 20 and sensor < 50:
                         self._state[i] = 1
                     elif sensor >= 50:
@@ -121,7 +121,9 @@ class SensorStatus(Subject):
                     else:
                         self._state[i] = 0
                 self.notify()
-                print(readings) if debug else ''
+                if debug:
+                    print(readings)
+                    print(self._state)
                 time.sleep(0.1)
 
 class MotorClamp(Observer):
