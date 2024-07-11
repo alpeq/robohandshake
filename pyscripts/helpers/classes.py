@@ -125,12 +125,13 @@ class SensorStatus(Subject):
                 time.sleep(0.1)
 
 class MotorClamp(Observer):
-    def __init__(self, motor_ids, debug=False):
+    def __init__(self, motor_ids, serialport, debug=False):
         #self.motor_handle = None
         self.portHandler, self.packetHandler =  self.setup_motor_comm()
         [self.setup_motor_init_mode(id) for id in motor_ids]
         self.state_sensors = [0, 0, 0]
         self.flag_change = False
+        self.port_name = serialport
         self.debug = debug
     def update(self, subject: Subject) -> None:
         self.state_sensors = subject._state
@@ -143,7 +144,7 @@ class MotorClamp(Observer):
 
     def setup_motor_comm(self):
         # Initialize PortHandler and PacketHandler instance
-        portHandler = PortHandler(DEVICENAME)
+        portHandler = PortHandler(self.port_name)
         packetHandler = PacketHandler(PROTOCOL_VERSION)
 
         # Open port
