@@ -12,7 +12,7 @@ Grip_Open = 900
 Wristroll_neutral = 2250
 #Wrist_up = 2620
 #Wrist_down = 1630
-Wrist_neutral = 2020
+Wristtilt_neutral = 2020
 Elbow_relaxed = 1800
 Elbow_mean = 2300 # 2000 exp decay shake
 Elbow_max_amplitude = 300#800 500
@@ -25,7 +25,7 @@ def arm_startup_position(handler):
                  Motor_ids['wrist_tilt'], Motor_ids['wrist_roll'] ]
     goal_list = [Shoulder_up, 2048, 1018,
                  Elbow_mean, 2020,
-                 Wrist_neutral, 2650]
+                 Wristtilt_neutral, Wristroll_neutral]
     handler.move_motors_to_goals_list(id_list, goal_list)
     #handler.move_motor_to_goal(Motor_ids['shoulder_tilt'], Shoulder_up)
     #handler.move_motor_to_goal(Motor_ids['shoulder_roll'], 2048)
@@ -38,7 +38,8 @@ def arm_startup_position(handler):
 def arm_closedown_position(handler):
     handler.move_motor_to_goal(Motor_ids['elbow_tilt'], Elbow_relaxed)
     handler.move_motor_to_goal(Motor_ids['shoulder_tilt'], Shoulder_down)
-    handler.move_motor_to_goal(Motor_ids['wrist_tilt'], Wrist_neutral)
+    handler.move_motor_to_goal(Motor_ids['wrist_tilt'], Wristtilt_neutral)
+    handler.move_motor_to_goal(Motor_ids['wrist_roll'], Wristroll_neutral)
 
 def setup_compliance(handler):
     handler.setup_motor_register_mode(Motor_ids['shoulder_tilt'], ADDR_OPERATING_MODE, 5)  # Complaint mode
@@ -66,7 +67,7 @@ def shaking_phase(handler, tactile=False):
         else:
             sign_amp = -1
         amplitude = sign_amp * Elbow_max_amplitude * math.exp(-n/4)
-        handler.move_motors_to_goals_list([elbow_motor, wrist_motor], [int(Elbow_mean+amplitude), int(Wrist_neutral+amplitude)])
+        handler.move_motors_to_goals_list([elbow_motor, wrist_motor], [int(Elbow_mean+amplitude), int(Wristtilt_neutral+amplitude)])
         # Adaptive to touch
         if tactile and handler.check_for_condition([Side, Palm],[2]):
             if n_cycle == -1:
