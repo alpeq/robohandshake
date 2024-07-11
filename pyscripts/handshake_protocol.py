@@ -15,7 +15,7 @@ Wrist_neutral = 2020
 Elbow_relaxed = 1800
 Elbow_mean = 2200 # 2000 exp decay shake
 Elbow_max_amplitude = 500#800
-Shoulder_up =   1900 #1900
+Shoulder_up   =   2100 #1900
 Shoulder_down = 1700 #1550
 
 def arm_startup_position(handler):
@@ -43,7 +43,11 @@ def setup_compliance(handler):
     handler.setup_motor_register_mode(Motor_ids['shoulder_tilt'], ADDR_OPERATING_MODE, 5)  # Complaint mode
     handler.setup_motor_register_mode(Motor_ids['shoulder_tilt'], ADDR_GOAL_CURRENT, 100)
     handler.setup_motor_register_mode(Motor_ids['wrist_tilt'], ADDR_OPERATING_MODE, 5)  # Complaint mode
-    handler.setup_motor_register_mode(Motor_ids['wrist_tilt'], ADDR_GOAL_CURRENT, 200)
+    handler.setup_motor_register_mode(Motor_ids['wrist_tilt'], ADDR_GOAL_CURRENT, 50)
+
+def setup_rigid(handler):
+    handler.setup_motor_register_mode(Motor_ids['shoulder_tilt'], ADDR_OPERATING_MODE, 3)  # Complaint mode
+    handler.setup_motor_register_mode(Motor_ids['wrist_tilt'], ADDR_OPERATING_MODE, 3)  # Complaint mode
 
 def shaking_phase(handler, tactile=False):
     ''' Shaking based on elbow tilt axes
@@ -67,7 +71,7 @@ def shaking_phase(handler, tactile=False):
     return
 
 def handshake_protocol_tactile(handmotor_sub):
-    #TOCHECK
+    #TOCHECK COPY FROM NO TACTILE
     handmotor_sub.move_motor_to_goal(Motor_ids['gripper'], Grip_Open)
     print("REACHING: GIVE ME THAT HAND ")
     # Wait until somebody grab the hand -  side or palm in state 1 or 2
@@ -166,6 +170,7 @@ def main():
     sensor = threading.Thread(name="Sensor_Reading", target=handsense_topic.start_sensor_reading)
     sensor.start()
     while 1:
+        setup_rigid(handmotor_sub)
         arm_startup_position(handmotor_sub)
         handshake_protocol(handmotor_sub)
         arm_closedown_position(handmotor_sub)
