@@ -37,7 +37,7 @@ def arm_closedown_position(handler):
 
 def closegrip_2dof_thumb(handler):
     handler.move_motors_til_signals_list([Motor_ids['wrist_roll'], Motor_ids['gripper']],
-                                         [Wristroll_closed, Grip_closed], Thumb, debug=True)
+                                         [Wristroll_closed, Grip_closed], Thumb, debug=False)
     return
 
 def opengrip_2dof_thumb(handler):

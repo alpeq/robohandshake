@@ -17,6 +17,7 @@ def handshake_protocol_tactile(handmotor_sub, wait_user=False):
     print("CONTACT - Activated Side/Palm - Gripper closing - I grab you yours")
     # Close the hand until touch in thumb
     #closegrip_2dof_thumb(handmotor_sub)
+    #_ = wait_user_feedback() if wait_user else ''
     print("CONTACT - Activated Thumb - Shaking")
     # start the shaking
     setup_compliance(handmotor_sub)
