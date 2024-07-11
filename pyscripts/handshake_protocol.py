@@ -161,6 +161,6 @@ def test_motors():
         time.sleep(10)
 
 if __name__ == '__main__':
-    test_sensors()
+    #test_sensors()
     #test_motors()
     main()
