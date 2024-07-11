@@ -343,13 +343,15 @@ class MotorClamp(Observer):
                 break
         return
 
-    def wait_til_condition(self, index_sensor, state_list):
+    def wait_til_condition(self, index_sensor, state_list, debug=False):
         '''
         @param index_sensor : List of sensor indexes to check
         @param state_list: List of states to fill the condition
         '''
         break_flag = False
         while 1:
+            if debug:
+                print(self.state_sensors)
             for ind in index_sensor:
                 if self.state_sensors[ind] in state_list:
                     break_flag = True
