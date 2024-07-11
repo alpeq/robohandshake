@@ -56,7 +56,9 @@ def shaking_phase(handler, tactile=False):
     elbow_motor = Motor_ids['elbow_tilt']
     wrist_motor = Motor_ids['wrist_tilt']
     n = 0
+    points_cycle = 2
     while(n < 8):
+        n_cycle = math.floor((n-1)/points_cycle)
         print(n)
         if n % 2 == 0:
             sign_amp = 1
@@ -65,7 +67,12 @@ def shaking_phase(handler, tactile=False):
         amplitude = sign_amp * Elbow_max_amplitude * math.exp(-n/4)
         handler.move_motors_to_goals_list([elbow_motor, wrist_motor], [int(Elbow_mean+amplitude), int(Wrist_neutral+amplitude)])
         if tactile and handler.check_for_condition([Side, Palm],[2]):
-            n = max(n-3,0)
+            if n_cycle == -1:
+                n += 1
+            elif n_cycle == 0:
+                n -= 1
+            else:
+                n = max(n - 3, 0)
         else:
             n += 1
     return
@@ -87,7 +94,7 @@ def handshake_protocol_tactile(handmotor_sub, wait_user=False):
     shaking_phase(handmotor_sub, tactile=True)
     print("CONTACT - No Movement - Rapport LOOK AT EYES/ Message ...")
     time.sleep(0.52)
-    _ = wait_user_feedback() if wait_user else ''
+    #_ = wait_user_feedback() if wait_user else ''
     # Wait until increase in the pressure or release - Side or palm sensors in state 2
     #handmotor_sub.wait_til_condition([Side, Palm], [2])
     print("RETURN: Gripper To Open Position: My pleasure!")
