@@ -217,7 +217,7 @@ class MotorClamp(Observer):
         # Close port
         self.portHandler.closePort()
 
-    def move_motor_to_goal(self, dxl_id, goal):
+    def move_motor_to_goal(self, dxl_id, goal, tolerance=DXL_MOVING_STATUS_THRESHOLD):
         # Write goal position
         dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler, dxl_id, ADDR_GOAL_POSITION, goal)
         if dxl_comm_result != COMM_SUCCESS:
@@ -236,7 +236,7 @@ class MotorClamp(Observer):
 
             print("[ID:%03d] GoalPos:%03d  PresPos:%03d" % (dxl_id, goal, dxl_present_position))
 
-            if abs(goal - dxl_present_position) <= DXL_MOVING_STATUS_THRESHOLD:
+            if abs(goal - dxl_present_position) <= tolerance:
                 break
         return
 
