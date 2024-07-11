@@ -7,16 +7,16 @@ import threading
 Motor_ids = {'shoulder_tilt':11, 'shoulder_roll':12, 'shoulder_pan':16,
                  'elbow_tilt':14, 'elbow_pan':15, 'wrist_tilt':2, 'wrist_roll':17,
                  'gripper':13 }
-Grip_closed = 1400
+Grip_closed = 1430
 Grip_Open = 900
 Wrist_up = 2620
 Wrist_down = 1630
 Wrist_neutral = 2020
 Elbow_relaxed = 1800
 Elbow_mean = 2200 # 2000 exp decay shake
-Elbow_max_amplitude = 300#800
-Shoulder_up = 2000
-Shoulder_down = 1550
+Elbow_max_amplitude = 500#800
+Shoulder_up =   1900 #1900
+Shoulder_down = 1700 #1550
 
 def arm_startup_position(handler):
     id_list   = [Motor_ids['shoulder_tilt'], Motor_ids['shoulder_roll'], Motor_ids['shoulder_pan'],
