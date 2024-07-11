@@ -2,7 +2,7 @@ import math
 from .classes import *
 
 # Motor related values
-Motor_ids = {'shoulder_tilt':11, 'shoulder_roll':12, 'shoulder_pan':16,
+Motor_ids = {'neck':3, 'shoulder_tilt':11, 'shoulder_roll':12, 'shoulder_pan':16,
                  'elbow_tilt':14, 'elbow_pan':15, 'wrist_tilt':2, 'wrist_roll':17,
                  'gripper':13 }
 Grip_closed = 1500
@@ -17,12 +17,16 @@ Elbow_mean = 2920 # 2000 exp decay shake
 Elbow_max_amplitude = 300#800 500
 Shoulder_up   = 2100 #1900
 Shoulder_down = 1550 #1550
+Neck_up   = 2100
+Neck_down = 1600
 
 def arm_startup_position(handler):
-    id_list   = [Motor_ids['shoulder_tilt'], Motor_ids['shoulder_roll'], Motor_ids['shoulder_pan'],
+    id_list = [Motor_ids['neck'],
+                 Motor_ids['shoulder_tilt'], Motor_ids['shoulder_roll'], Motor_ids['shoulder_pan'],
                  Motor_ids['elbow_tilt'], Motor_ids['elbow_pan'],
                  Motor_ids['wrist_tilt'], Motor_ids['wrist_roll'] ]
-    goal_list = [Shoulder_up, 2048, 1018,
+    goal_list = [Neck_up,
+                 Shoulder_up, 2048, 1018,
                  Elbow_mean, 3085,
                  Wristtilt_neutral, Wristroll_open]
     handler.move_motors_to_goals_list(id_list, goal_list)
@@ -35,6 +39,7 @@ def arm_retract_return(handler):
     return
 
 def arm_closedown_position(handler):
+    handler.move_motor_to_goal(Motor_ids['neck'], Neck_down)
     handler.move_motor_to_goal(Motor_ids['elbow_tilt'], Elbow_relaxed)
     handler.move_motor_to_goal(Motor_ids['shoulder_tilt'], Shoulder_down)
     handler.move_motor_to_goal(Motor_ids['wrist_tilt'], Wristtilt_neutral)
