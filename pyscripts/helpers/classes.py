@@ -132,11 +132,12 @@ class SensorStatus(Subject):
                     print("{} \n\n".format(self._state))
 
 class MotorClamp(Observer):
-    def __init__(self, motor_ids, debug=False, serial_port=None):
+    def __init__(self, motor_ids, debug=False, serial_port=None, motor_start=True):
         #self.motor_handle = None
         self.port_name = serial_port
         self.portHandler, self.packetHandler =  self.setup_motor_comm()
-        [self.setup_motor_init_mode(id) for id in motor_ids]
+        if motor_start:
+            [self.setup_motor_init_mode(id) for id in motor_ids]
         self.state_sensors = [0, 0, 0]
         self.flag_change = False
         self.debug = debug

@@ -152,7 +152,14 @@ def test_motors():
         closegrip_2dof_thumb(handmotor_sub)
         time.sleep(10)
 
+def test_motor_registers():
+    id_motor = Motor_ids['shoulder_tilt']
+    handmotor_sub = MotorClamp([id_motor], debug=False, serial_port="/dev/ttyUSB0", motor_start=False)
+    print(handmotor_sub.packetHandler.read4ByteTxRx(handmotor_sub.portHandler, id_motor, ADDR_OPERATING_MODE))
+    print(handmotor_sub.packetHandler.read4ByteTxRx(handmotor_sub.portHandler, id_motor, ADDR_GOAL_CURRENT))
+
 if __name__ == '__main__':
     #test_sensors()
     #test_motors()
+    test_motor_registers()
     main()
