@@ -63,9 +63,9 @@ def opengrip_2dof_thumb(handler):
 
 def setup_compliance(handler):
     handler.setup_motor_register_mode(Motor_ids['shoulder_tilt'], ADDR_OPERATING_MODE, 5)  # Complaint mode
-    handler.setup_motor_register_mode(Motor_ids['shoulder_tilt'], ADDR_GOAL_CURRENT, 100)
+    handler.setup_motor_register_mode(Motor_ids['shoulder_tilt'], ADDR_GOAL_CURRENT, 150)
     handler.setup_motor_register_mode(Motor_ids['wrist_tilt'], ADDR_OPERATING_MODE, 5)  # Complaint mode
-    handler.setup_motor_register_mode(Motor_ids['wrist_tilt'], ADDR_GOAL_CURRENT, 50)
+    handler.setup_motor_register_mode(Motor_ids['wrist_tilt'], ADDR_GOAL_CURRENT, 150)
 
 def setup_high_compliance(handler):
     #handler.setup_motor_register_mode(Motor_ids['shoulder_tilt'], ADDR_OPERATING_MODE, 5)  # Complaint mode
@@ -78,6 +78,7 @@ def setup_high_compliance(handler):
 
 def setup_rigid(handler):
     handler.setup_motor_register_mode(Motor_ids['shoulder_tilt'], ADDR_OPERATING_MODE, 3)  # Complaint mode
+    handler.setup_motor_register_mode(Motor_ids['elbow_tilt'], ADDR_OPERATING_MODE, 3)  # Complaint mode
     handler.setup_motor_register_mode(Motor_ids['wrist_tilt'], ADDR_OPERATING_MODE, 3)  # Complaint mode
 
 def shaking_phase(handler, tactile=False, osci_points=Points_oscilation):
