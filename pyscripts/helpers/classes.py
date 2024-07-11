@@ -276,7 +276,7 @@ class MotorClamp(Observer):
 
         return
 
-    def move_motor_til_signal(self, dxl_id, goal, index_sensor):
+    def move_motor_til_signal(self, dxl_id, goal, index_sensor, debug=False):
         ''' The goal is stopped if the internal state_sensor at refered index is changed '''
         # Write goal position
         dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler, dxl_id, ADDR_GOAL_POSITION, goal)
@@ -286,6 +286,8 @@ class MotorClamp(Observer):
             print("%s" % self.packetHandler.getRxPacketError(dxl_error))
 
         while self.state_sensors[index_sensor] == 0:
+            if debug:
+                print(self.state_sensors, ' -- ', index_sensor)
             # Read present position
             dxl_present_position, dxl_comm_result, dxl_error = self.packetHandler.read4ByteTxRx(self.portHandler, dxl_id,
                                                                                            ADDR_PRESENT_POSITION)
