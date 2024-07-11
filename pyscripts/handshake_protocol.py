@@ -16,53 +16,35 @@ def handshake_protocol_tactile(handmotor_sub, wait_user=False):
     handmotor_sub.wait_til_condition([Side, Palm], [1, 2, 3, 4, 5])
     print("CONTACT - Activated Side/Palm - Gripper closing - I grab you yours")
     # Close the hand until touch in thumb
-    #closegrip_2dof_thumb(handmotor_sub)
-    #_ = wait_user_feedback() if wait_user else ''
     print("CONTACT - Activated Thumb - Shaking")
     # start the shaking
     setup_compliance(handmotor_sub)
     shaking_phase(handmotor_sub, tactile=True)
     print("CONTACT - No Movement - Rapport LOOK AT EYES/ Message ...")
-    #_ = wait_user_feedback() if wait_user else ''
-    # Wait until increase in the pressure or release - Side or palm sensors in state 2
-    #handmotor_sub.wait_til_condition([Side, Palm], [2])
     # Open hand to init
     print("RETURN: Release me, otherwise no return!")
     handmotor_sub.wait_til_condition([Side], [0, 1, 2, 3], debug=False)
     time.sleep(0.52)
-    opengrip_2dof_thumb(handmotor_sub)
     print("RETURN: Gripper To Open Position: My pleasure!")
+    opengrip_2dof_thumb(handmotor_sub)
     return
 
-def handshake_protocol(handmotor_sub, wait_user=False):
+def handshake_protocol_time(handmotor_sub, wait_user=False):
     handmotor_sub.move_motor_to_goal(Motor_ids['gripper'], Grip_open)
     print("REACHING: GIVE ME THAT HAND ")
-    # Wait until somebody grab the hand -  side or palm in state 1 or 2
-    #handmotor_sub.wait_til_condition([Side, Palm], [1, 2])
     time.sleep(0.5)
-    _ = wait_user_feedback() if wait_user else ''
-    print("CONTACT - Activated Side/Palm - Gripper closing - I grab you yours")
+    #_ = wait_user_feedback() if wait_user else ''
+    print("CONTACT - I grab you yours and shake")
     # Close the hand until touch in thumb
     #handmotor_sub.move_motor_til_signal(Motor_ids['gripper'], Grip_closed - 200, Thumb)
-    handmotor_sub.move_motor_to_goal(Motor_ids['gripper'], Grip_closed)
-    time.sleep(0.2)
-    _ = wait_user_feedback() if wait_user else ''
     print("CONTACT - Activated Thumb - Shaking")
     # Inmediatly start the shaking
     setup_compliance(handmotor_sub)
-    shaking_phase(handmotor_sub, tactile=False)   # TODO Signal based increase of time points and amplitude
+    shaking_phase(handmotor_sub, tactile=False, osci_points=5)
     print("CONTACT - No Movement - Rapport LOOK AT EYES/ Message ...")
     time.sleep(0.52)
-    _ = wait_user_feedback() if wait_user else ''
-    #print("Close Position: Waitting for a good shake!")
-    # Wait until increase in the pressure or release - Side or palm sensors in state 2
-    #handmotor_sub.wait_til_condition([Side, Palm], [2])
     print("RETURN: Gripper To Open Position: My pleasure!")
-    # Open hand to init
-    handmotor_sub.move_motor_to_goal(Motor_ids['gripper'], Grip_open)
-    _ = wait_user_feedback() if wait_user else ''
-    print("RETURN: Release me, otherwise no return!")
-    #handmotor_sub.wait_til_condition([Side], [0])
+    opengrip_2dof_thumb(handmotor_sub)
     return
 
 
@@ -86,11 +68,11 @@ def old_protocol(handmotor_sub):
 
 def main():
     # Check if filename is provided as an argument
-    if len(sys.argv) != 2:
-        print("Usage: python script_name.py <file_name>")
+    if len(sys.argv) != 3 or sys.argv[2] not in ['tactile', 'time']:
+        print("Usage: python script_name.py <file_name> <tactile|time>")
         sys.exit(1)
     file_name = sys.argv[1]  # Get the file name from command line arguments
-
+    protocol = sys.argv[2]  # Get the file name from command line arguments
     # Wait to press button
     if wait_user_feedback():
         return
@@ -107,7 +89,13 @@ def main():
     while 1:
         setup_rigid(handmotor_sub)
         arm_startup_position(handmotor_sub)
-        handshake_protocol_tactile(handmotor_sub, wait_user=True)
+        if protocol == "tactile":
+            handshake_protocol_tactile(handmotor_sub, wait_user=False)
+        elif protocol == "time":
+            handshake_protocol_time(handmotor_sub, wait_user=False)
+        else:
+            print("error")
+            return
         arm_retract_return(handmotor_sub)
         arm_closedown_position(handmotor_sub)
         print("****************************************\n"

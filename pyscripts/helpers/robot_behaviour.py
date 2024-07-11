@@ -46,9 +46,13 @@ def arm_closedown_position(handler):
     handler.move_motors_to_goals_list(id_list, goal_list)
     return
 
-def closegrip_2dof_thumb(handler):
-    handler.move_motors_til_signals_list([Motor_ids['wrist_roll'], Motor_ids['gripper']],
-                                         [Wristroll_closed, Grip_closed], Thumb, debug=False)
+def closegrip_2dof_thumb(handler, tactile=False):
+    if tactile:
+        handler.move_motors_til_signals_list([Motor_ids['wrist_roll'], Motor_ids['gripper']],
+                                             [Wristroll_closed, Grip_closed], Thumb, debug=False)
+    else:
+        handler.move_motors_to_goals_list([Motor_ids['wrist_roll'], Motor_ids['gripper']],
+                                             [Wristroll_closed-50, Grip_closed-50])
     return
 
 def opengrip_2dof_thumb(handler):
@@ -66,18 +70,18 @@ def setup_rigid(handler):
     handler.setup_motor_register_mode(Motor_ids['shoulder_tilt'], ADDR_OPERATING_MODE, 3)  # Complaint mode
     handler.setup_motor_register_mode(Motor_ids['wrist_tilt'], ADDR_OPERATING_MODE, 3)  # Complaint mode
 
-def shaking_phase(handler, tactile=False):
+def shaking_phase(handler, tactile=False, osci_points=Points_oscilation):
     ''' Shaking based on elbow tilt axes
         Oscilation Point to Point with exponentially decrease amplitude
     '''
-    closegrip_2dof_thumb(handler)
+    closegrip_2dof_thumb(handler, tactile=tactile)
 
     elbow_motor = Motor_ids['elbow_tilt']
     wrist_motor = Motor_ids['wrist_tilt']
     n = 0
     total_n = 0
     points_cycle = 2
-    while(n < Points_oscilation):
+    while(n < osci_points):
         n_cycle = math.floor((n-1)/points_cycle)
         print(n)
         sign_amp = 1 if n % 2 == 0 else -1
