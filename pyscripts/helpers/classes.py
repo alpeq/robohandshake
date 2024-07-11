@@ -100,7 +100,7 @@ class SensorStatus(Subject):
         for observer in self._observers:
             observer.update(self)
 
-    def start_sensor_reading(self) -> None:
+    def start_sensor_reading(self, debug=False) -> None:
         """
         Loop to read sensors
         """
@@ -121,7 +121,7 @@ class SensorStatus(Subject):
                     else:
                         self._state[i] = 0
                 self.notify()
-                # print(out_dump)
+                print(readings) if debug else ''
                 time.sleep(0.1)
 
 class MotorClamp(Observer):

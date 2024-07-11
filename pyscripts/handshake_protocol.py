@@ -197,5 +197,22 @@ def main():
     sensor.join()
     handaction_sub.cleanup_motor_list(all_motor_ids)
 
+def test_sensors():
+    # Check if filename is provided as an argument
+    if len(sys.argv) != 2:
+        print("Usage: python script_name.py <file_name>")
+        sys.exit(1)
+    file_name = sys.argv[1]  # Get the file name from command line arguments
+
+    # Handshake Protocol    handsense_topic = SensorStatus(file_name, debug=False, serial_port="/dev/ttyACM0")
+    sensor = threading.Thread(name="Sensor_Reading", target=handsense_topic.start_sensor_reading, kwargs={'debug':True})
+
+    wait_user_feedback()
+
+    handsense_topic.clean_sensor_reading()
+    sensor.join()
+
+
 if __name__ == '__main__':
+    test_sensors()
     main()
