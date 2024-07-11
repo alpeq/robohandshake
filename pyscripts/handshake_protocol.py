@@ -62,7 +62,7 @@ def shaking_phase(handler, tactile=False):
             sign_amp = -1
 
         amplitude = sign_amp * Elbow_max_amplitude * math.exp(-n/4)
-        handler.move_motors_to_goals_list([elbow_motor, wrist_motor], [int(Elbow_mean+amplitude), int(Wrist_neutral-amplitude)])
+        handler.move_motors_to_goals_list([elbow_motor, wrist_motor], [int(Elbow_mean+amplitude), int(Wrist_neutral+amplitude)])
         #handler.move_motor_to_goal(elbow_motor, int(Elbow_mean+amplitude))
         #handler.move_motor_to_goal(wrist_motor, wrist_goal)
         # handler.state_sensors if any in state==2 n = n-3 with max(n,0)
