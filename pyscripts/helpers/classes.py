@@ -122,13 +122,14 @@ class SensorStatus(Subject):
                         self._state[i] = 3
                     elif sensor >= 75:
                         self._state[i] = 4
+                    elif sensor >= 90:
+                        self._state[i] = 5
                     else:
                         self._state[i] = 0
                 self.notify()
                 if debug:
                     print("{} \n".format(readings))
                     print("{} \n\n".format(self._state))
-                time.sleep(0.1)
 
 class MotorClamp(Observer):
     def __init__(self, motor_ids, debug=False, serial_port=None):
