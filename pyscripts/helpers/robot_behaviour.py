@@ -82,7 +82,7 @@ def shaking_phase(handler, tactile=False):
                 else:
                     n = max(n - 3, 0)
             else:
-                n += 3
+                n += 5
         else:
             n += 1
         total_n += 1
