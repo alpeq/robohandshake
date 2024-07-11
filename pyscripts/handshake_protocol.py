@@ -213,7 +213,21 @@ def test_sensors():
     handsense_topic.clean_sensor_reading()
     sensor.join()
 
+def test_motors():
+    all_motor_ids = list(Motor_ids.values())
+
+    handmotor_sub = MotorClamp(all_motor_ids, debug=False, serial_port="/dev/ttyUSB0")
+
+    arm_startup_position(handmotor_sub)
+
+    neutral = 2650
+    while True:
+        handmotor_sub.move_motor_to_goal(Motor_ids['wrist_roll'], neutral, debug=True)
+        handmotor_sub.move_motor_to_goal(Motor_ids['wrist_roll'], neutral+100, debug=True)
+        handmotor_sub.move_motor_to_goal(Motor_ids['wrist_roll'], neutral-100, debug=True)
+        time.sleep(5)
 
 if __name__ == '__main__':
     #test_sensors()
+    test_motors()
     main()
