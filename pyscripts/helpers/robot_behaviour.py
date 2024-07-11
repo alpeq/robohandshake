@@ -28,6 +28,12 @@ def arm_startup_position(handler):
     handler.move_motors_to_goals_list(id_list, goal_list)
     return
 
+def arm_retract_return(handler):
+    id_list = [Motor_ids['shoulder_tilt'], Motor_ids['elbow_tilt']]
+    goal_list = [Shoulder_down + 300, Elbow_mean + 300]
+    handler.move_motors_to_goals_list(id_list, goal_list)
+    return
+
 def arm_closedown_position(handler):
     handler.move_motor_to_goal(Motor_ids['elbow_tilt'], Elbow_relaxed)
     handler.move_motor_to_goal(Motor_ids['shoulder_tilt'], Shoulder_down)
