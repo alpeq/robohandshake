@@ -130,10 +130,17 @@ def test_sensors():
     file_name = sys.argv[1]  # Get the file name from command line arguments
 
     # Test
+    # Setup motor-sensor
+    all_motor_ids = list(Motor_ids.values())
     handsense_topic = SensorStatus(file_name, debug=False, serial_port="/dev/ttyACM0")
+    handmotor_sub = MotorClamp(all_motor_ids, debug=False, serial_port="/dev/ttyUSB0")
+    handsense_topic.attach(handmotor_sub)
+
     sensor = threading.Thread(name="Sensor_Reading", target=handsense_topic.start_sensor_reading, kwargs={'debug':True})
     sensor.start()
-    wait_user_feedback()
+    while True:
+        print("MOTOR READING STATES: {}".format(handmotor_sub.state_sensors))
+        wait_user_feedback()
 
     handsense_topic.clean_sensor_reading()
     sensor.join()
@@ -154,6 +161,6 @@ def test_motors():
         time.sleep(10)
 
 if __name__ == '__main__':
-    #test_sensors()
+    test_sensors()
     #test_motors()
     main()
