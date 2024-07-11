@@ -248,7 +248,7 @@ class MotorClamp(Observer):
             elif dxl_error != 0:
                 print("%s" % self.packetHandler.getRxPacketError(dxl_error))
 
-        while len(dxl_id)!= 0:
+        while len(id_list)!= 0:
             rm_id = []
             rm_goal = []
             for i, (dxl_id, goal) in enumerate(zip(id_list, goal_list)):

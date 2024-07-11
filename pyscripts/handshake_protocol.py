@@ -11,31 +11,44 @@ Grip_closed = 1500
 Grip_Open = 900
 Wrist_up = 2820
 Wrist_down = 1530
+Wrist_neutral = 2020
 Elbow_relaxed = 1800
-Elbow_mean = 2600 # 2000 exp decay shake
-Elbow_max_amplitude = 200#800
-Shoulder_up = 2190
-Shoulder_down = 550
+Elbow_mean = 2200 # 2000 exp decay shake
+Elbow_max_amplitude = 300#800
+Shoulder_up = 2100
+Shoulder_down = 1550
 
 def arm_startup_position(handler):
-    handler.move_motor_to_goal(Motor_ids['shoulder_tilt'], Shoulder_up)
-    handler.move_motor_to_goal(Motor_ids['shoulder_roll'], 2048)
-    handler.move_motor_to_goal(Motor_ids['shoulder_pan'], 1018)
-    handler.move_motor_to_goal(Motor_ids['elbow_tilt'], Elbow_mean)
-    handler.move_motor_to_goal(Motor_ids['elbow_pan'], 2020)
-    handler.move_motor_to_goal(Motor_ids['wrist_tilt'], 2650)
-    handler.move_motor_to_goal(Motor_ids['wrist_roll'], 2650)
-    #handler.move_motor_to_goal(Motor_ids['gripper'], Grip_Open)
+    id_list   = [Motor_ids['shoulder_tilt'], Motor_ids['shoulder_roll'], Motor_ids['shoulder_pan'],
+                 Motor_ids['elbow_tilt'], Motor_ids['elbow_pan'], Motor_ids['wrist_tilt'], Motor_ids['wrist_roll'], ]
+    goal_list = [Shoulder_up, 2048, 1018,
+                 Elbow_mean, Wrist_neutral, 2650, 2650]
+    handler.move_motors_to_goals_list(id_list, goal_list)
+    #handler.move_motor_to_goal(Motor_ids['shoulder_tilt'], Shoulder_up)
+    #handler.move_motor_to_goal(Motor_ids['shoulder_roll'], 2048)
+    #handler.move_motor_to_goal(Motor_ids['shoulder_pan'], 1018)
+    #handler.move_motor_to_goal(Motor_ids['elbow_tilt'], Elbow_mean)
+    #handler.move_motor_to_goal(Motor_ids['elbow_pan'], 2020)
+    #handler.move_motor_to_goal(Motor_ids['wrist_tilt'], 2650)
+    #handler.move_motor_to_goal(Motor_ids['wrist_roll'], 2650)
 
 def arm_closedown_position(handler):
     handler.move_motor_to_goal(Motor_ids['elbow_tilt'], Elbow_relaxed)
     handler.move_motor_to_goal(Motor_ids['shoulder_tilt'], Shoulder_down)
+    handler.move_motor_to_goal(Motor_ids['wrist_tilt'], Wrist_neutral)
 
-def shaking_elbow(handler):
+def setup_compliance(handler):
+    handler.setup_motor_register_mode(Motor_ids['shoulder_tilt'], ADDR_OPERATING_MODE, 5)  # Complaint mode
+    handler.setup_motor_register_mode(Motor_ids['shoulder_tilt'], ADDR_GOAL_CURRENT, 100)
+    handler.setup_motor_register_mode(Motor_ids['wrist_tilt'], ADDR_OPERATING_MODE, 5)  # Complaint mode
+    handler.setup_motor_register_mode(Motor_ids['wrist_tilt'], ADDR_GOAL_CURRENT, 200)
+
+def shaking_phase(handler, tactile=False):
     ''' Shaking based on elbow tilt axes
         Oscilation Point to Point with exponentially decrease amplitude
     '''
-    id_motor = Motor_ids['elbow_tilt']
+    elbow_motor = Motor_ids['elbow_tilt']
+    wrist_motor = Motor_ids['wrist_tilt']
     for n in range(8):
         if n % 2 == 0:
             wrist_goal = Wrist_up
@@ -45,11 +58,13 @@ def shaking_elbow(handler):
             sign_amp = -1
 
         amplitude = sign_amp * Elbow_max_amplitude * math.exp(-n/4)
-        handler.move_motor_to_goal(id_motor, int(Elbow_mean+amplitude))
+        handler.move_motor_to_goal(elbow_motor, int(Elbow_mean+amplitude))
+        handler.move_motor_to_goal(wrist_motor, wrist_goal)
         # handler.state_sensors if any in state==2 n = n-3 with max(n,0)
     return
 
 def handshake_protocol_tactile(handmotor_sub):
+    #TOCHECK
     handmotor_sub.move_motor_to_goal(Motor_ids['gripper'], Grip_Open)
     print("REACHING: GIVE ME THAT HAND ")
     # Wait until somebody grab the hand -  side or palm in state 1 or 2
@@ -60,7 +75,7 @@ def handshake_protocol_tactile(handmotor_sub):
     print("CONTACT - Activated Thumb - Shaking")
     # Inmediatly start the shaking
     handmotor_sub.setup_motor_register_mode(Motor_ids['shoulder_tilt'], ADDR_GOAL_CURRENT, 30)# Extra shoulder complaince
-    shaking_elbow(handmotor_sub)   # TODO Signal based increase of time points and amplitude
+    shaking_phase(handmotor_sub, tactile=True)   # TODO Signal based increase of time points and amplitude
     print("CONTACT - No Movement - Rapport LOOK AT EYES/ Message ...")
     time.sleep(0.52)
     #print("Close Position: Waitting for a good shake!")
@@ -78,14 +93,17 @@ def handshake_protocol(handmotor_sub):
     handmotor_sub.move_motor_to_goal(Motor_ids['gripper'], Grip_Open)
     print("REACHING: GIVE ME THAT HAND ")
     # Wait until somebody grab the hand -  side or palm in state 1 or 2
-    handmotor_sub.wait_til_condition([Side, Palm], [1, 2])
+    #handmotor_sub.wait_til_condition([Side, Palm], [1, 2])
+    time.sleep(0.5)
     print("CONTACT - Activated Side/Palm - Gripper closing - I grab you yours")
     # Close the hand until touch in thumb
-    handmotor_sub.move_motor_til_signal(Motor_ids['gripper'], Grip_closed - 200, Thumb)
+    #handmotor_sub.move_motor_til_signal(Motor_ids['gripper'], Grip_closed - 200, Thumb)
+    handmotor_sub.move_motor_to_goal(Motor_ids['gripper'], Grip_closed)
+    time.sleep(0.2)
     print("CONTACT - Activated Thumb - Shaking")
     # Inmediatly start the shaking
-    handmotor_sub.setup_motor_register_mode(Motor_ids['shoulder_tilt'], ADDR_GOAL_CURRENT, 30)# Extra shoulder complaince
-    shaking_elbow(handmotor_sub)   # TODO Signal based increase of time points and amplitude
+    setup_compliance(handmotor_sub)
+    shaking_phase(handmotor_sub, tactile=False)   # TODO Signal based increase of time points and amplitude
     print("CONTACT - No Movement - Rapport LOOK AT EYES/ Message ...")
     time.sleep(0.52)
     #print("Close Position: Waitting for a good shake!")
@@ -95,8 +113,7 @@ def handshake_protocol(handmotor_sub):
     # Open hand to init
     handmotor_sub.move_motor_to_goal(Motor_ids['gripper'], Grip_Open)
     print("RETURN: Release me, otherwise no return!")
-    handmotor_sub.wait_til_condition([Side], [0])
-    # TODO RETURN whole arm at same time?
+    #handmotor_sub.wait_til_condition([Side], [0])
     return
 
 

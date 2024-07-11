@@ -24,7 +24,7 @@ PROTOCOL_VERSION            = 2.0
 
 TORQUE_ENABLE               = 1     # Value for enabling the torque
 TORQUE_DISABLE              = 0     # Value for disabling the torque
-DXL_MOVING_STATUS_THRESHOLD = 200    # Dynamixel moving status threshold
+DXL_MOVING_STATUS_THRESHOLD = 40    # Dynamixel moving status threshold
 
 DEVICENAME                  = '/dev/ttyUSB0'
 
