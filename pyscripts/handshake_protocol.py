@@ -222,9 +222,9 @@ def test_motors():
 
     neutral = 2650
     while True:
-        handmotor_sub.move_motor_to_goal(Motor_ids['wrist_roll'], neutral, debug=True)
-        handmotor_sub.move_motor_to_goal(Motor_ids['wrist_roll'], neutral+100, debug=True)
-        handmotor_sub.move_motor_to_goal(Motor_ids['wrist_roll'], neutral-100, debug=True)
+        handmotor_sub.move_motor_to_goal(Motor_ids['wrist_roll'], neutral)
+        handmotor_sub.move_motor_to_goal(Motor_ids['wrist_roll'], neutral+100)
+        handmotor_sub.move_motor_to_goal(Motor_ids['wrist_roll'], neutral-100)
         time.sleep(5)
 
 if __name__ == '__main__':
