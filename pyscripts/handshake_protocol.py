@@ -16,10 +16,7 @@ def handshake_protocol_tactile(handmotor_sub, wait_user=False):
     handmotor_sub.wait_til_condition([Side, Palm], [1, 2, 3, 4, 5])
     print("CONTACT - Activated Side/Palm - Gripper closing - I grab you yours")
     # Close the hand until touch in thumb
-    closegrip_2dof_thumb(handmotor_sub)
-    #handmotor_sub.move_motor_til_signal(Motor_ids['gripper'], Grip_closed, Thumb, debug=True)
-    #time.sleep(0.2)
-    #_ = wait_user_feedback() if wait_user else ''
+    #closegrip_2dof_thumb(handmotor_sub)
     print("CONTACT - Activated Thumb - Shaking")
     # start the shaking
     setup_compliance(handmotor_sub)
@@ -32,10 +29,9 @@ def handshake_protocol_tactile(handmotor_sub, wait_user=False):
     print("RETURN: Gripper To Open Position: My pleasure!")
     # Open hand to init
     print("RETURN: Release me, otherwise no return!")
-    handmotor_sub.wait_til_condition([Side], [0, 1, 2, 3], debug=True)
+    handmotor_sub.wait_til_condition([Side], [0, 1, 2], debug=False)
     #handmotor_sub.move_motor_to_goal(Motor_ids['gripper'], Grip_open)
     opengrip_2dof_thumb(handmotor_sub)
-    _ = wait_user_feedback() if wait_user else ''
     return
 
 def handshake_protocol(handmotor_sub, wait_user=False):

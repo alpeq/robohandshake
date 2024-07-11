@@ -59,6 +59,8 @@ def shaking_phase(handler, tactile=False):
     ''' Shaking based on elbow tilt axes
         Oscilation Point to Point with exponentially decrease amplitude
     '''
+    closegrip_2dof_thumb(handler)
+
     elbow_motor = Motor_ids['elbow_tilt']
     wrist_motor = Motor_ids['wrist_tilt']
     n = 0
