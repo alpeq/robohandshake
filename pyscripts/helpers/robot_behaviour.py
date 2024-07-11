@@ -39,11 +39,11 @@ def arm_retract_return(handler):
     return
 
 def arm_closedown_position(handler):
-    handler.move_motor_to_goal(Motor_ids['neck'], Neck_down)
-    handler.move_motor_to_goal(Motor_ids['elbow_tilt'], Elbow_relaxed)
-    handler.move_motor_to_goal(Motor_ids['shoulder_tilt'], Shoulder_down)
-    handler.move_motor_to_goal(Motor_ids['wrist_tilt'], Wristtilt_neutral)
-    handler.move_motor_to_goal(Motor_ids['wrist_roll'], Wristroll_open)
+    #handler.move_motor_to_goal(Motor_ids['neck'], Neck_down)
+    id_list = [Motor_ids['elbow_tilt'], Motor_ids['shoulder_tilt'],
+               Motor_ids['wrist_tilt'],Motor_ids['wrist_roll']]
+    goal_list = [Elbow_relaxed, Shoulder_down, Wristtilt_neutral, Wristroll_open]
+    handler.move_motors_to_goals_list(id_list, goal_list)
     return
 
 def closegrip_2dof_thumb(handler):
