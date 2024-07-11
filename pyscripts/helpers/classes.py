@@ -73,13 +73,13 @@ class SensorStatus(Subject):
     """
     SensorStatus is a Subject node that notifies the status of each of the sensors for motor control and logging
     """
-    def __init__(self, file_name, debug=False, serialPort=None):
+    def __init__(self, file_name, debug=False, serial_port=None):
         self._state: List[int] = [0,0,0]    # int state of each of the sensors [0] neutral - [1] touched -  [2] intense pressure
         self._observers: List[Observer] = []
         self.fname = file_name
         self._reading_flag = True
         self.debug = debug
-        self.serial_port = serial.Serial(serialPort)
+        self.serial_port = serial.Serial(serial_port)
     def clean_sensor_reading(self):
         self._reading_flag = False
     def activate_sensor_reading(self):
@@ -125,13 +125,13 @@ class SensorStatus(Subject):
                 time.sleep(0.1)
 
 class MotorClamp(Observer):
-    def __init__(self, motor_ids, serialport=None, debug=False):
+    def __init__(self, motor_ids, debug=False, serial_port=None):
         #self.motor_handle = None
         self.portHandler, self.packetHandler =  self.setup_motor_comm()
         [self.setup_motor_init_mode(id) for id in motor_ids]
         self.state_sensors = [0, 0, 0]
         self.flag_change = False
-        self.port_name = serialport
+        self.port_name = serial_port
         self.debug = debug
     def update(self, subject: Subject) -> None:
         self.state_sensors = subject._state

@@ -155,8 +155,8 @@ def main():
 
     # Setup motor-sensor
     all_motor_ids = list(Motor_ids.values())
-    handsense_topic = SensorStatus(file_name, debug=False, serialPort="/dev/ttyACM1")
-    handmotor_sub = MotorClamp(all_motor_ids, debug=False, serialPort="/dev/ttyUSB1")
+    handsense_topic = SensorStatus(file_name, debug=False, serial_port="/dev/ttyACM1")
+    handmotor_sub = MotorClamp(all_motor_ids, debug=False, serial_port="/dev/ttyUSB1")
     handsense_topic.attach(handmotor_sub)
 
     # Handshake Protocol
