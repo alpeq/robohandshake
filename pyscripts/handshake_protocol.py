@@ -73,7 +73,7 @@ def old_protocol(handmotor_sub):
 
 def main():
     # Check if filename is provided as an argument
-    if len(sys.argv) != 3 or sys.argv[2] not in ['tactile', 'time']:
+    if len(sys.argv) != 3 or sys.argv[2] not in ['tactile', 'time', 'passive']:
         print("Usage: python script_name.py <file_name> <tactile|time|passive>")
         sys.exit(1)
     file_name = sys.argv[1]  # Get the file name from command line arguments
