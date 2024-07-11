@@ -93,7 +93,6 @@ def main():
     sensor.start()
     while 1:
         setup_rigid(handmotor_sub)
-        return
         arm_startup_position(handmotor_sub)
         if protocol == "tactile":
             handshake_protocol_tactile(handmotor_sub, wait_user=False)
