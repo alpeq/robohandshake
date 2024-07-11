@@ -13,7 +13,7 @@ def handshake_protocol_tactile(handmotor_sub, wait_user=False):
     handmotor_sub.move_motor_to_goal(Motor_ids['gripper'], Grip_open)
     print("REACHING: GIVE ME THAT HAND ")
     # Wait until somebody grab the hand -  side or palm in state 1 or 2
-    handmotor_sub.wait_til_condition([Side, Palm], [1, 2, 3, 4])
+    handmotor_sub.wait_til_condition([Side, Palm], [1, 2, 3, 4, 5])
     print("CONTACT - Activated Side/Palm - Gripper closing - I grab you yours")
     # Close the hand until touch in thumb
     closegrip_2dof_thumb(handmotor_sub)
@@ -32,7 +32,7 @@ def handshake_protocol_tactile(handmotor_sub, wait_user=False):
     print("RETURN: Gripper To Open Position: My pleasure!")
     # Open hand to init
     print("RETURN: Release me, otherwise no return!")
-    handmotor_sub.wait_til_condition([Side], [0, 1], debug=True)
+    handmotor_sub.wait_til_condition([Side], [0, 1, 2, 3], debug=True)
     #handmotor_sub.move_motor_to_goal(Motor_ids['gripper'], Grip_open)
     opengrip_2dof_thumb(handmotor_sub)
     _ = wait_user_feedback() if wait_user else ''
