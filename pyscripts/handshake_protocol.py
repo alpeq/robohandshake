@@ -116,6 +116,10 @@ def handshake_protocol(handmotor_sub):
     #handmotor_sub.wait_til_condition([Side], [0])
     return
 
+def wait_user_feedback():
+    print("Press any key to start the protocol! (or press ESC to quit!)")
+    if getch() == chr(0x1b):
+        return
 
 def old_protocol(handmotor_sub):
     print("Start: GIVE ME THAT HAND ")
@@ -140,35 +144,27 @@ def main():
     if len(sys.argv) != 2:
         print("Usage: python script_name.py <file_name>")
         sys.exit(1)
-
     file_name = sys.argv[1]  # Get the file name from command line arguments
 
-    print("Press any key to start the protocol! (or press ESC to quit!)")
-    if getch() == chr(0x1b):
-        return
-
-    all_motor_ids = list(Motor_ids.values())
+    # Wait to press button
+    wait_user_feedback()
 
     # Setup motor-sensor
+    all_motor_ids = list(Motor_ids.values())
     handsense_topic = SensorStatus(file_name, debug=False, serialPort="/dev/ttyACM0")
     handmotor_sub = MotorClamp(all_motor_ids, debug=False)
     handsense_topic.attach(handmotor_sub)
 
-    ''' Handshake Protocol '''
+    # Handshake Protocol
     sensor = threading.Thread(name="Sensor_Reading", target=handsense_topic.start_sensor_reading)
     sensor.start()
-
     while 1:
         arm_startup_position(handmotor_sub)
         handshake_protocol(handmotor_sub)
         arm_closedown_position(handmotor_sub)
-
         print("****************************************\n"
-              "DO YOU WANT MORE? \n"
-              "Press any key to start the protocol! (or press ESC to quit!) \n"
-              "**************************************** \n")
-        if getch() == chr(0x1b):
-            return
+              "DO YOU WANT MORE? \n")
+        wait_user_feedback()
 
     handsense_topic.clean_sensor_reading()
     sensor.join()
