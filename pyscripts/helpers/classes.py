@@ -242,7 +242,7 @@ class MotorClamp(Observer):
                 break
         return
 
-    def move_motors_to_goals_list(self, id_list, goal_list):
+    def move_motors_to_goals_list(self, id_list, goal_list, debug=False):
         for dxl_id, goal in zip(id_list, goal_list):
             # Write goal position
             dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler, dxl_id, ADDR_GOAL_POSITION, goal)
@@ -263,7 +263,8 @@ class MotorClamp(Observer):
                 elif dxl_error != 0:
                     print("%s" % self.packetHandler.getRxPacketError(dxl_error))
 
-                print("[ID:%03d] GoalPos:%03d  PresPos:%03d" % (dxl_id, goal, dxl_present_position))
+                if debug:
+                    print("[ID:%03d] GoalPos:%03d  PresPos:%03d" % (dxl_id, goal, dxl_present_position))
 
                 if abs(goal - dxl_present_position) <= DXL_MOVING_STATUS_THRESHOLD:
                     rm_id.append(dxl_id)
