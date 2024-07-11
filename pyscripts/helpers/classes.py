@@ -183,13 +183,15 @@ class MotorClamp(Observer):
             print("%s" % self.packetHandler.getRxPacketError(dxl_error))
         else:
             print("Dynamixel has been successfully connected")
+        acceleration_value = ACCELERATION if dxl_id != 3 else ACCELERATION - 3
+        velocity_value = VELOCITY if dxl_id != 3 else VELOCITY - 20
         # Acceleration and velocity user friendly profile
-        dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler, dxl_id, ADDR_PROFILE_ACCELERATION, ACCELERATION)
+        dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler, dxl_id, ADDR_PROFILE_ACCELERATION, acceleration_value)
         if dxl_comm_result != COMM_SUCCESS:
             print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
         elif dxl_error != 0:
             print("%s" % self.packetHandler.getRxPacketError(dxl_error))
-        dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler, dxl_id, ADDR_PROFILE_VELOCITY, VELOCITY)
+        dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler, dxl_id, ADDR_PROFILE_VELOCITY, velocity_value)
         if dxl_comm_result != COMM_SUCCESS:
             print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
         elif dxl_error != 0:
