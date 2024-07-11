@@ -114,10 +114,14 @@ class SensorStatus(Subject):
                 file.write(',')
                 # States to notify
                 for i, sensor in enumerate(readings):
-                    if sensor >= 20 and sensor < 50:
+                    if sensor >= 10 and sensor < 20:
                         self._state[i] = 1
-                    elif sensor >= 50:
+                    if sensor >= 20 and sensor < 50:
                         self._state[i] = 2
+                    elif sensor >= 50 and sensor < 75:
+                        self._state[i] = 3
+                    elif sensor >= 75:
+                        self._state[i] = 4
                     else:
                         self._state[i] = 0
                 self.notify()
