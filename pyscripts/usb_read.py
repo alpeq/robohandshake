@@ -1,6 +1,6 @@
 import serial
 
-ser = serial.Serial("/dev/ttyACM0")
+ser = serial.Serial("/dev/ttyACM1")
 while True:
   line = ser.readline()
   the_dict = eval(line.decode().strip())
