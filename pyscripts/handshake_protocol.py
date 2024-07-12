@@ -3,6 +3,10 @@ import math
 from helpers.robot_behaviour import *
 import threading
 
+import logging
+from datetime import datetime
+from pathlib import Path
+
 def wait_user_feedback():
     print("Press any key to start the protocol! (or press q to quit!)")
     if getch() == chr(27):
@@ -48,9 +52,12 @@ def handshake_protocol_time(handmotor_sub, wait_user=False):
     return
 
 def handshake_protocol_passive(handmotor_sub, wait_user=False):
+    t1 = datetime.now()
     handmotor_sub.move_motor_to_goal(Motor_ids['gripper'], Grip_passive)
     setup_high_compliance(handmotor_sub)
     time.sleep(10.52)
+    t2 = datetime.now()
+    logging.info("Total Diff: {}".format(t1-t2))
     return
 
 def old_protocol(handmotor_sub):
@@ -78,9 +85,13 @@ def main():
         sys.exit(1)
     file_name = sys.argv[1]  # Get the file name from command line arguments
     protocol = sys.argv[2]  # Get the file name from command line arguments
-    # Wait to press button
-    if wait_user_feedback():
-        return
+
+    # Logging
+    timestr = time.strftime("%Y%m%d-%H%M%S")
+    logging.basicConfig(filename=file_name + '_' + timestr +'_logging.txt',
+                        level=logging.INFO,
+                        format='%(asctime)s.%(msecs)03d %(levelname)s %(message)s', datefmt='%Y-%m-%d %H:%M:%S',
+                        force=True)
 
     # Setup motor-sensor
     all_motor_ids = list(Motor_ids.values())
@@ -90,9 +101,12 @@ def main():
 
     # Handshake Protocol
     sensor = threading.Thread(name="Sensor_Reading", target=handsense_topic.start_sensor_reading)
+    wait_user_feedback()
+    logging.info("START")
     sensor.start()
     #while 1:
     setup_rigid(handmotor_sub)
+    logging.info("START")
     arm_startup_position(handmotor_sub)
     if protocol == 'adaptive':
         handshake_protocol_tactile(handmotor_sub, wait_user=False)
