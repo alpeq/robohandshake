@@ -13,7 +13,13 @@ def wait_user_feedback():
         return True
     return False
 
-def handshake_protocol_tactile(handmotor_sub, wait_user=False):
+def handshake_protocol_adaptive(handmotor_sub, wait_user=False):
+    '''
+        Adaptive based protocol, all subphases are dependant of tactile signals from hand
+        -- Contact subphases described
+          x's waiting to grip contact   - x's condition shaking with max 3s?
+        - no-movement x's condition(touch) + 0.22s
+        '''
     t1 = datetime.today().timestamp()
     handmotor_sub.move_motor_to_goal(Motor_ids['gripper'], Grip_open)
     t2 = datetime.today().timestamp()
@@ -51,6 +57,10 @@ def handshake_protocol_tactile(handmotor_sub, wait_user=False):
     return
 
 def handshake_protocol_time(handmotor_sub, wait_user=False):
+    '''
+        Time based protocol -- Contact subphases described
+        0.5s waiting to grip   - ~1.5s shaking  - ~0.52s no-movement
+    '''
     t1 = datetime.today().timestamp()
     handmotor_sub.move_motor_to_goal(Motor_ids['gripper'], Grip_open)
     print("REACHING: GIVE ME THAT HAND ")
@@ -82,6 +92,9 @@ def handshake_protocol_time(handmotor_sub, wait_user=False):
     return
 
 def handshake_protocol_passive(handmotor_sub, wait_user=False):
+    ''' High complaint mode in the joins with no moving in the starting point
+        ~10.5 seconds to account for confusion
+    '''
     t1 = datetime.today().timestamp()
     handmotor_sub.move_motor_to_goal(Motor_ids['gripper'], Grip_passive)
     setup_high_compliance(handmotor_sub)
@@ -138,10 +151,13 @@ def main():
     sensor.start()
     #while 1:
     #setup_rigid(handmotor_sub)
-    logging.info("START")
+    logging.info("START-->Arm Up")
+    t1 = datetime.today().timestamp()
     arm_startup_position(handmotor_sub)
+    t2 = datetime.today().timestamp()
+    logging.info("*** Reaching (s): {}".format(t2-t1))
     if protocol == 'adaptive':
-        handshake_protocol_tactile(handmotor_sub, wait_user=False)
+        handshake_protocol_adaptive(handmotor_sub, wait_user=False)
     elif protocol == 'timed':
         handshake_protocol_time(handmotor_sub, wait_user=False)
     elif protocol == 'passive':
@@ -149,14 +165,14 @@ def main():
     else:
         print("error")
         return
+    t1 = datetime.today().timestamp()
     arm_retract_return(handmotor_sub)
     arm_closedown_position(handmotor_sub)
-
+    t2 = datetime.today().timestamp()
+    logging.info("*** Downtime (s): {}".format(t2 - t1))
+    logging.info("FINISHED-->Arm Down")
     print("****************************************\n")
     #      "DO YOU WANT MORE? \n")
-    wait_user_feedback()
-    #    break
-
     handsense_topic.clean_sensor_reading()
     sensor.join()
     handmotor_sub.cleanup_motor_list(all_motor_ids)
@@ -209,7 +225,7 @@ def test_motor_registers():
     setup_high_compliance(handmotor_sub)
     print("HIGH COMPLIANT")
     wait_user_feedback()
-    setup_rigid(handmotor_sub)
+    setup_high_compliance_back(handmotor_sub)
     print("NO COMPLIANT")
     wait_user_feedback()
     setup_high_compliance(handmotor_sub)
