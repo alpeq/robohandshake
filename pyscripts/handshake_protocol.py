@@ -73,8 +73,8 @@ def old_protocol(handmotor_sub):
 
 def main():
     # Check if filename is provided as an argument
-    if len(sys.argv) != 3 or sys.argv[2] not in ['tactile', 'time', 'passive']:
-        print("Usage: python script_name.py <file_name> <tactile|time|passive>")
+    if len(sys.argv) != 3 or sys.argv[2] not in ['adaptive', 'timed', 'passive']:
+        print("Usage: python script_name.py <file_name> <adaptive|timed|passive>")
         sys.exit(1)
     file_name = sys.argv[1]  # Get the file name from command line arguments
     protocol = sys.argv[2]  # Get the file name from command line arguments
@@ -94,11 +94,11 @@ def main():
     while 1:
         setup_rigid(handmotor_sub)
         arm_startup_position(handmotor_sub)
-        if protocol == "tactile":
+        if protocol == 'adaptive':
             handshake_protocol_tactile(handmotor_sub, wait_user=False)
-        elif protocol == "time":
+        elif protocol == 'timed':
             handshake_protocol_time(handmotor_sub, wait_user=False)
-        elif protocol == "passive":
+        elif protocol == 'passive':
             handshake_protocol_passive(handmotor_sub, wait_user=False)
         else:
             print("error")
