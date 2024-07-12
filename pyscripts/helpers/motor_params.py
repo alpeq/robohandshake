@@ -17,7 +17,7 @@ ADDR_OPERATING_MODE		    = 11
 
 DXL_MINIMUM_POSITION_VALUE  = 0         # Refer to the Minimum Position Limit of product eManual
 DXL_MAXIMUM_POSITION_VALUE  = 4090      # Refer to the Maximum Position Limit of product eManual
-BAUDRATE                    = 1000000
+BAUDRATE                    = 57600 #1000000
 
 PROTOCOL_VERSION            = 2.0
 
