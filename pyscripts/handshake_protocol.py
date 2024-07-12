@@ -91,24 +91,24 @@ def main():
     # Handshake Protocol
     sensor = threading.Thread(name="Sensor_Reading", target=handsense_topic.start_sensor_reading)
     sensor.start()
-    while 1:
-        setup_rigid(handmotor_sub)
-        arm_startup_position(handmotor_sub)
-        if protocol == 'adaptive':
-            handshake_protocol_tactile(handmotor_sub, wait_user=False)
-        elif protocol == 'timed':
-            handshake_protocol_time(handmotor_sub, wait_user=False)
-        elif protocol == 'passive':
-            handshake_protocol_passive(handmotor_sub, wait_user=False)
-        else:
-            print("error")
-            return
-        arm_retract_return(handmotor_sub)
-        arm_closedown_position(handmotor_sub)
-        print("****************************************\n"
-              "DO YOU WANT MORE? \n")
-        if wait_user_feedback():
-            break
+    #while 1:
+    setup_rigid(handmotor_sub)
+    arm_startup_position(handmotor_sub)
+    if protocol == 'adaptive':
+        handshake_protocol_tactile(handmotor_sub, wait_user=False)
+    elif protocol == 'timed':
+        handshake_protocol_time(handmotor_sub, wait_user=False)
+    elif protocol == 'passive':
+        handshake_protocol_passive(handmotor_sub, wait_user=False)
+    else:
+        print("error")
+        return
+    arm_retract_return(handmotor_sub)
+    arm_closedown_position(handmotor_sub)
+    print("****************************************\n")
+    #      "DO YOU WANT MORE? \n")
+    wait_user_feedback()
+    #    break
 
     handsense_topic.clean_sensor_reading()
     sensor.join()
