@@ -52,12 +52,12 @@ def handshake_protocol_time(handmotor_sub, wait_user=False):
     return
 
 def handshake_protocol_passive(handmotor_sub, wait_user=False):
-    t1 = datetime.now()
+    t1 = datetime.strptime(datetime.now(), "%H:%M:%S")
     handmotor_sub.move_motor_to_goal(Motor_ids['gripper'], Grip_passive)
     setup_high_compliance(handmotor_sub)
     time.sleep(10.52)
-    t2 = datetime.now()
-    logging.info("Total Diff: {}".format(t1-t2))
+    t2 = datetime.strptime(datetime.now(), "%H:%M:%S")
+    logging.info("Total Diff (s): {}".format(t2-t1))
     return
 
 def old_protocol(handmotor_sub):
