@@ -160,9 +160,9 @@ def test_motor_registers():
     #handmotor_sub.setup_motor_register_mode(id_motor, ADDR_OPERATING_MODE, 3, 1)
     setup_compliance(handmotor_sub)
     wait_user_feedback()
-    setup_rigid()
+    setup_rigid(handmotor_sub)
     wait_user_feedback()
-    setup_high_compliance()
+    setup_high_compliance(handmotor_sub)
     #print(handmotor_sub.packetHandler.read4ByteTxRx(handmotor_sub.portHandler, id_motor, ADDR_OPERATING_MODE))
     #print(handmotor_sub.packetHandler.read4ByteTxRx(handmotor_sub.portHandler, id_motor, ADDR_GOAL_CURRENT))
 
