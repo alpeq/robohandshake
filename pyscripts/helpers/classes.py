@@ -180,18 +180,12 @@ class MotorClamp(Observer):
 
         # TORQUE
         self.setup_motor_register_mode(dxl_id, ADDR_TORQUE_ENABLE, TORQUE_ENABLE, 1)
-        print("GOOD1")
         # ACCELERATION
         self.setup_motor_register_mode(dxl_id, ADDR_PROFILE_ACCELERATION, acceleration_value, 4)
-        print("GOOD2")
         # VELOCITY
         self.setup_motor_register_mode(dxl_id, ADDR_PROFILE_VELOCITY, velocity_value, 4)
-        print("GOOD3")
         # NOT COMPLIANT!
         self.setup_motor_register_mode(dxl_id, ADDR_OPERATING_MODE, 3, 1)
-        self.setup_motor_register_mode(dxl_id, ADDR_OPERATING_MODE, 3, 2)
-        self.setup_motor_register_mode(dxl_id, ADDR_OPERATING_MODE, 3, 4)
-        print("GOOD4")
         return
 
     def cleanup_motor_list(self, dxl_id_list):
@@ -359,7 +353,7 @@ class MotorClamp(Observer):
 
     def setup_motor_register_mode(self, dxl_id, address, value, n_bytes):
         if n_bytes == 1:
-                dxl_comm_result, dxl_error = self.packetHandler.write1ByteTx(self.portHandler, dxl_id, address,
+                dxl_comm_result, dxl_error = self.packetHandler.write1ByteTxRx(self.portHandler, dxl_id, address,
                                                                        value)
         elif n_bytes == 2:
                 dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, dxl_id, address,
@@ -367,7 +361,6 @@ class MotorClamp(Observer):
         elif n_bytes == 4:
                 dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler, dxl_id, address,
                                                                        value)
-
         if dxl_comm_result != COMM_SUCCESS:
             print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
         elif dxl_error != 0:

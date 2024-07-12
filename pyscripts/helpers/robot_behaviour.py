@@ -62,9 +62,11 @@ def opengrip_2dof_thumb(handler):
     return
 
 def setup_compliance(handler):
+    handler.setup_motor_register_mode(Motor_ids['gripper'], ADDR_OPERATING_MODE, 5, 1)  # Complaint mode
     handler.setup_motor_register_mode(Motor_ids['elbow_tilt'], ADDR_OPERATING_MODE, 5, 1)  # Complaint mode
-    handler.setup_motor_register_mode(Motor_ids['elbow_tilt'], ADDR_GOAL_CURRENT, 350, 2)
     handler.setup_motor_register_mode(Motor_ids['wrist_tilt'], ADDR_OPERATING_MODE, 5, 1)  # Complaint mode
+    handler.setup_motor_register_mode(Motor_ids['gripper'], ADDR_GOAL_CURRENT, 350, 2)
+    handler.setup_motor_register_mode(Motor_ids['elbow_tilt'], ADDR_GOAL_CURRENT, 350, 2)
     handler.setup_motor_register_mode(Motor_ids['wrist_tilt'], ADDR_GOAL_CURRENT, 350, 2)
 
 def setup_high_compliance(handler):
