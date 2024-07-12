@@ -29,7 +29,7 @@ def handshake_protocol_tactile(handmotor_sub, wait_user=False):
     # Close the hand until touch in thumb
     print("CONTACT - Activated Thumb - Shaking")
     # start the shaking
-    setup_compliance(handmotor_sub)
+    #setup_compliance(handmotor_sub)
     shaking_phase(handmotor_sub, tactile=True)
     print("CONTACT - No Movement - Rapport LOOK AT EYES/ Message ...")
     t2 = datetime.today().timestamp()
@@ -47,7 +47,7 @@ def handshake_protocol_tactile(handmotor_sub, wait_user=False):
     t2 = datetime.today().timestamp()
     logging.info("TOTAL - Total Diff (s): {}".format(t2 - t1))
 
-    setup_compliance_back(handmotor_sub)
+    #setup_compliance_back(handmotor_sub)
     return
 
 def handshake_protocol_time(handmotor_sub, wait_user=False):
@@ -63,7 +63,7 @@ def handshake_protocol_time(handmotor_sub, wait_user=False):
     #handmotor_sub.move_motor_til_signal(Motor_ids['gripper'], Grip_closed - 200, Thumb)
     print("CONTACT - Activated Thumb - Shaking")
     # Inmediatly start the shaking
-    setup_compliance(handmotor_sub)
+    #setup_compliance(handmotor_sub)
     shaking_phase(handmotor_sub, tactile=False, osci_points=5)
     print("CONTACT - No Movement - Rapport LOOK AT EYES/ Message ...")
     t2 = datetime.today().timestamp()
@@ -78,7 +78,7 @@ def handshake_protocol_time(handmotor_sub, wait_user=False):
     t2 = datetime.today().timestamp()
     logging.info("TOTAL - Total Diff (s): {}".format(t2 - t1))
 
-    setup_compliance_back(handmotor_sub)
+    #setup_compliance_back(handmotor_sub)
     return
 
 def handshake_protocol_passive(handmotor_sub, wait_user=False):
