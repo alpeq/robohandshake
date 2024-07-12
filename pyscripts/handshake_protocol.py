@@ -154,7 +154,7 @@ def test_motors():
 
 def test_motor_registers():
     id_motor = [Motor_ids['shoulder_tilt'], Motor_ids['elbow_tilt'], Motor_ids['wrist_tilt']]
-    handmotor_sub = MotorClamp(id_motor, debug=False, serial_port="/dev/ttyUSB0", motor_start=True)
+    handmotor_sub = MotorClamp(id_motor, debug=False, serial_port="/dev/ttyUSB0", motor_start=False)
     #handmotor_sub = MotorClamp(id_motor, debug=False, serial_port="/dev/ttyUSB0", motor_start=False)
 
     wait_user_feedback()
