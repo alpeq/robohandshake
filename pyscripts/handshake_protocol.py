@@ -112,7 +112,7 @@ def main():
 
     handsense_topic.clean_sensor_reading()
     sensor.join()
-    handaction_sub.cleanup_motor_list(all_motor_ids)
+    handmotor_sub.cleanup_motor_list(all_motor_ids)
 
 def test_sensors():
     # Check if filename is provided as an argument
