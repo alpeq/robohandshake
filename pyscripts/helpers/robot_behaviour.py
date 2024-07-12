@@ -107,7 +107,6 @@ def shaking_phase(handler, tactile=False, osci_points=Points_oscilation):
     points_cycle = 2
     while(n < osci_points):
         n_cycle = math.floor((n-1)/points_cycle)
-        print(n)
         sign_amp = 1 if n % 2 == 0 else -1
         amplitude = sign_amp * Elbow_max_amplitude * math.exp(-n/Tau_oscilation)
         handler.move_motors_to_goals_list([elbow_motor, wrist_motor], [int(Elbow_mean+amplitude), int(Wristtilt_neutral+amplitude)])
