@@ -189,7 +189,7 @@ class MotorClamp(Observer):
         return
 
     def cleanup_motor_list(self, dxl_id_list):
-        [self.cleanup_motors(dxl_id) for dxl_id in dxl_id_list]
+        [self.cleanup_motor(dxl_id) for dxl_id in dxl_id_list]
 
     def cleanup_motor(self, dxl_id):
         # Disable Dynamixel Torque
