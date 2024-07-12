@@ -89,8 +89,7 @@ def handshake_protocol_passive(handmotor_sub, wait_user=False):
     t2 = datetime.today().timestamp()#datetime.strptime(datetime.now(), "%H:%M:%S")
     #setup_rigid(handmotor_sub)
     logging.info("Total Diff (s): {}".format(t2-t1))
-
-    setup_high_compliance_back(handmotor_sub)
+    increase_stiffness(handmotor_sub)
     return
 
 def old_protocol(handmotor_sub):

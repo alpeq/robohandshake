@@ -84,6 +84,11 @@ def setup_high_compliance(handler):
     handler.setup_motor_register_mode(Motor_ids['elbow_tilt'], ADDR_GOAL_CURRENT, 144, 2)
     handler.setup_motor_register_mode(Motor_ids['wrist_tilt'], ADDR_GOAL_CURRENT, 44, 2)
 
+def increase_stiffness(handler):
+    handler.setup_motor_register_mode(Motor_ids['gripper'], ADDR_GOAL_CURRENT, 1000, 2)
+    handler.setup_motor_register_mode(Motor_ids['elbow_tilt'], ADDR_GOAL_CURRENT, 1000, 2)
+    handler.setup_motor_register_mode(Motor_ids['wrist_tilt'], ADDR_GOAL_CURRENT, 1000, 2)
+
 def setup_high_compliance_back(handler):
     handler.setup_motor_register_mode(Motor_ids['gripper'], ADDR_OPERATING_MODE, 3, 1)  # Complaint mode
     handler.setup_motor_register_mode(Motor_ids['elbow_tilt'], ADDR_OPERATING_MODE, 3, 1)  # Complaint mode
