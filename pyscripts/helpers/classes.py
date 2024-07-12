@@ -384,8 +384,6 @@ class MotorClamp(Observer):
             print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
         elif dxl_error != 0:
             print("%s" % self.packetHandler.getRxPacketError(dxl_error))
-        else:
-            print("NO RESULT?? {}    {} ".format(dxl_comm_result, dxl_error))
         return
 
 if __name__ == "__main__":
