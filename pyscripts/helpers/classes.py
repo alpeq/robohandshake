@@ -189,7 +189,7 @@ class MotorClamp(Observer):
         return
 
     def cleanup_motor_list(self, dxl_id_list):
-        [self.cleanup_motor(dxl_id) for dxl_id in dxl_id_list]
+        [self.cleanup_motor(dxl_id) if dxl_id != 3 else '' for dxl_id in dxl_id_list]
         # Close port
         self.portHandler.closePort()
         return
