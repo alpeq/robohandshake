@@ -156,14 +156,18 @@ def test_motor_registers():
     id_motor = [Motor_ids['shoulder_tilt'], Motor_ids['elbow_tilt'], Motor_ids['wrist_tilt']]
     handmotor_sub = MotorClamp(id_motor, debug=False, serial_port="/dev/ttyUSB0", motor_start=True)
     #handmotor_sub = MotorClamp(id_motor, debug=False, serial_port="/dev/ttyUSB0", motor_start=False)
-
+    print("NO COMPLIANT")
     wait_user_feedback()
     #handmotor_sub.setup_motor_register_mode(id_motor, ADDR_OPERATING_MODE, 3, 1)
     setup_compliance(handmotor_sub)
+    print("COMPLIANT")
     wait_user_feedback()
     setup_rigid(handmotor_sub)
+    print("NO COMPLIANT")
     wait_user_feedback()
     setup_high_compliance(handmotor_sub)
+    print("HIGH COMPLIANT")
+    wait_user_feedback()
     #print(handmotor_sub.packetHandler.read4ByteTxRx(handmotor_sub.portHandler, id_motor, ADDR_OPERATING_MODE))
     #print(handmotor_sub.packetHandler.read4ByteTxRx(handmotor_sub.portHandler, id_motor, ADDR_GOAL_CURRENT))
 
