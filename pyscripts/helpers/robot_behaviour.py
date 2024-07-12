@@ -5,6 +5,7 @@ from .classes import *
 Motor_ids = {'neck':3, 'shoulder_tilt':11, 'shoulder_roll':12, 'shoulder_pan':16,
                  'elbow_tilt':14, 'elbow_pan':15, 'wrist_tilt':2, 'wrist_roll':17,
                  'gripper':13 }
+
 Grip_closed = 1500
 Grip_passive = 1100
 Grip_open = 900
@@ -42,7 +43,7 @@ def arm_retract_return(handler):
 def arm_closedown_position(handler):
     #handler.move_motor_to_goal(Motor_ids['neck'], Neck_down)
     id_list = [Motor_ids['elbow_tilt'], Motor_ids['shoulder_tilt'],
-               Motor_ids['wrist_tilt'],Motor_ids['wrist_roll']]
+               Motor_ids['wrist_tilt'], Motor_ids['wrist_roll']]
     goal_list = [Elbow_relaxed, Shoulder_down, Wristtilt_neutral, Wristroll_open]
     handler.move_motors_to_goals_list(id_list, goal_list)
     return
@@ -69,6 +70,12 @@ def setup_compliance(handler):
     handler.setup_motor_register_mode(Motor_ids['elbow_tilt'], ADDR_GOAL_CURRENT, 250, 2)
     handler.setup_motor_register_mode(Motor_ids['wrist_tilt'], ADDR_GOAL_CURRENT, 150, 2)
 
+def setup_compliance_back(handler):
+    handler.setup_motor_register_mode(Motor_ids['gripper'], ADDR_OPERATING_MODE, 3, 1)  # Complaint mode
+    handler.setup_motor_register_mode(Motor_ids['elbow_tilt'], ADDR_OPERATING_MODE, 3, 1)  # Complaint mode
+    handler.setup_motor_register_mode(Motor_ids['wrist_tilt'], ADDR_OPERATING_MODE, 3, 1)  # Complaint mode
+
+
 def setup_high_compliance(handler):
     handler.setup_motor_register_mode(Motor_ids['gripper'], ADDR_OPERATING_MODE, 5, 1)  # Complaint mode
     handler.setup_motor_register_mode(Motor_ids['elbow_tilt'], ADDR_OPERATING_MODE, 5, 1)  # Complaint mode
@@ -77,10 +84,15 @@ def setup_high_compliance(handler):
     handler.setup_motor_register_mode(Motor_ids['elbow_tilt'], ADDR_GOAL_CURRENT, 144, 2)
     handler.setup_motor_register_mode(Motor_ids['wrist_tilt'], ADDR_GOAL_CURRENT, 44, 2)
 
-def setup_rigid(handler):
-    handler.setup_motor_register_mode(Motor_ids['shoulder_tilt'], ADDR_OPERATING_MODE, 3, 1)  # Complaint mode
+def setup_high_compliance_back(handler):
+    handler.setup_motor_register_mode(Motor_ids['gripper'], ADDR_OPERATING_MODE, 3, 1)  # Complaint mode
     handler.setup_motor_register_mode(Motor_ids['elbow_tilt'], ADDR_OPERATING_MODE, 3, 1)  # Complaint mode
     handler.setup_motor_register_mode(Motor_ids['wrist_tilt'], ADDR_OPERATING_MODE, 3, 1)  # Complaint mode
+
+#def setup_rigid(handler):
+#    handler.setup_motor_register_mode(Motor_ids['shoulder_tilt'], ADDR_OPERATING_MODE, 3, 1)  # Complaint mode
+#    handler.setup_motor_register_mode(Motor_ids['elbow_tilt'], ADDR_OPERATING_MODE, 3, 1)  # Complaint mode
+#    handler.setup_motor_register_mode(Motor_ids['wrist_tilt'], ADDR_OPERATING_MODE, 3, 1)  # Complaint mode
 
 def shaking_phase(handler, tactile=False, osci_points=Points_oscilation):
     ''' Shaking based on elbow tilt axes

@@ -47,6 +47,7 @@ def handshake_protocol_tactile(handmotor_sub, wait_user=False):
     t2 = datetime.today().timestamp()
     logging.info("TOTAL - Total Diff (s): {}".format(t2 - t1))
 
+    setup_compliance_back(handmotor_sub)
     return
 
 def handshake_protocol_time(handmotor_sub, wait_user=False):
@@ -77,6 +78,7 @@ def handshake_protocol_time(handmotor_sub, wait_user=False):
     t2 = datetime.today().timestamp()
     logging.info("TOTAL - Total Diff (s): {}".format(t2 - t1))
 
+    setup_compliance_back(handmotor_sub)
     return
 
 def handshake_protocol_passive(handmotor_sub, wait_user=False):
@@ -87,6 +89,8 @@ def handshake_protocol_passive(handmotor_sub, wait_user=False):
     t2 = datetime.today().timestamp()#datetime.strptime(datetime.now(), "%H:%M:%S")
     #setup_rigid(handmotor_sub)
     logging.info("Total Diff (s): {}".format(t2-t1))
+
+    setup_high_compliance_back(handmotor_sub)
     return
 
 def old_protocol(handmotor_sub):
@@ -134,7 +138,7 @@ def main():
     logging.info("START")
     sensor.start()
     #while 1:
-    setup_rigid(handmotor_sub)
+    #setup_rigid(handmotor_sub)
     logging.info("START")
     arm_startup_position(handmotor_sub)
     if protocol == 'adaptive':
