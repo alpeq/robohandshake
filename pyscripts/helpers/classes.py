@@ -189,6 +189,8 @@ class MotorClamp(Observer):
         print("GOOD3")
         # NOT COMPLIANT!
         self.setup_motor_register_mode(dxl_id, ADDR_OPERATING_MODE, 3, 1)
+        self.setup_motor_register_mode(dxl_id, ADDR_OPERATING_MODE, 3, 2)
+        self.setup_motor_register_mode(dxl_id, ADDR_OPERATING_MODE, 3, 4)
         print("GOOD4")
         return
 
