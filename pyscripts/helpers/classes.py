@@ -197,15 +197,8 @@ class MotorClamp(Observer):
             print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
         elif dxl_error != 0:
             print("%s" % self.packetHandler.getRxPacketError(dxl_error))
-        # Compliance
-        #dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler, dxl_id, ADDR_GOAL_CURRENT,
-        #                                                               3000) # 200 , 60
-        #if dxl_comm_result != COMM_SUCCESS:
-        #    print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
-        #elif dxl_error != 0:
-        #    print("%s" % self.packetHandler.getRxPacketError(dxl_error))
-        # NOT COMPLIANT!! IT OVERLAP PREV
-        dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler, dxl_id, ADDR_OPERATING_MODE,
+        # NOT COMPLIANT!
+        dxl_comm_result, dxl_error = self.packetHandler.write1ByteTxRx(self.portHandler, dxl_id, ADDR_OPERATING_MODE,
                                                                        3) # 5 Compliant
         if dxl_comm_result != COMM_SUCCESS:
             print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
@@ -376,9 +369,17 @@ class MotorClamp(Observer):
                 condition = True
         return condition
 
-    def setup_motor_register_mode(self, dxl_id, address, value):
-        dxl_comm_result, dxl_error = self.packetHandler.write1ByteTxRx(self.portHandler, dxl_id, address,
+    def setup_motor_register_mode(self, dxl_id, address, value, bytes):
+        if bytes == 1:
+                dxl_comm_result, dxl_error = self.packetHandler.write1ByteTxRx(self.portHandler, dxl_id, address,
                                                                        value)
+        elif bytes == 2:
+                dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, dxl_id, address,
+                                                                       value)
+        elif bytes == 4:
+                dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler, dxl_id, address,
+                                                                       value)
+
         if dxl_comm_result != COMM_SUCCESS:
             print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
         elif dxl_error != 0:

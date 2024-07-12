@@ -153,9 +153,14 @@ def test_motors():
         time.sleep(10)
 
 def test_motor_registers():
-    id_motor = Motor_ids['shoulder_tilt']
-    handmotor_sub = MotorClamp([id_motor], debug=False, serial_port="/dev/ttyUSB0", motor_start=False)
-    handmotor_sub.setup_motor_register_mode(id_motor, ADDR_OPERATING_MODE, 3)
+    id_motor = Motor_ids['elbow_tilt']
+    handmotor_sub = MotorClamp([id_motor], debug=False, serial_port="/dev/ttyUSB0")
+    handmotor_sub.setup_motor_register_mode(id_motor, ADDR_OPERATING_MODE, 3, 1)
+    setup_compliance()
+    wait_user_feedback()
+    setup_rigid()
+    wait_user_feedback()
+    setup_high_compliance()
     #print(handmotor_sub.packetHandler.read4ByteTxRx(handmotor_sub.portHandler, id_motor, ADDR_OPERATING_MODE))
     #print(handmotor_sub.packetHandler.read4ByteTxRx(handmotor_sub.portHandler, id_motor, ADDR_GOAL_CURRENT))
 
