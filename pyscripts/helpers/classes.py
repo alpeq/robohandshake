@@ -175,6 +175,9 @@ class MotorClamp(Observer):
         return portHandler, packetHandler
 
     def setup_motor_init_mode(self, dxl_id):
+        acceleration_value = ACCELERATION if dxl_id != 3 else ACCELERATION - 3
+        velocity_value = VELOCITY if dxl_id != 3 else VELOCITY - 20
+
         # Enable Dynamixel Torque
         dxl_comm_result, dxl_error = self.packetHandler.write1ByteTxRx(self.portHandler, dxl_id, ADDR_TORQUE_ENABLE, TORQUE_ENABLE)
         if dxl_comm_result != COMM_SUCCESS:
@@ -184,8 +187,6 @@ class MotorClamp(Observer):
         else:
             print("Dynamixel has been successfully connected")
 
-        acceleration_value = ACCELERATION if dxl_id != 3 else ACCELERATION - 3
-        velocity_value = VELOCITY if dxl_id != 3 else VELOCITY - 20
         # Acceleration and velocity user friendly profile
         dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler, dxl_id, ADDR_PROFILE_ACCELERATION, acceleration_value)
         if dxl_comm_result != COMM_SUCCESS:
@@ -202,7 +203,7 @@ class MotorClamp(Observer):
         print("GOOD3")
 
         # NOT COMPLIANT!
-        self.setup_motor_register_mode(dxl_id, ADDR_OPERATING_MODE, 3, 1)
+        self.setup_motor_register_mode(dxl_id, ADDR_OPERATING_MODE, 3, 2)
 
         print("GOOD4")
         return
