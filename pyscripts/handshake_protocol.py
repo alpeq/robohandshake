@@ -52,11 +52,11 @@ def handshake_protocol_time(handmotor_sub, wait_user=False):
     return
 
 def handshake_protocol_passive(handmotor_sub, wait_user=False):
-    t1 = datetime.strptime(datetime.now(), "%H:%M:%S")
+    t1 = datetime.today().timestamp()
     handmotor_sub.move_motor_to_goal(Motor_ids['gripper'], Grip_passive)
     setup_high_compliance(handmotor_sub)
     time.sleep(10.52)
-    t2 = datetime.strptime(datetime.now(), "%H:%M:%S")
+    t2 = datetime.today().timestamp()#datetime.strptime(datetime.now(), "%H:%M:%S")
     logging.info("Total Diff (s): {}".format(t2-t1))
     return
 
