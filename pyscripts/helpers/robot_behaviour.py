@@ -77,7 +77,6 @@ def setup_high_compliance(handler):
     handler.setup_motor_register_mode(Motor_ids['elbow_tilt'], ADDR_GOAL_CURRENT, 144, 2)
     handler.setup_motor_register_mode(Motor_ids['wrist_tilt'], ADDR_GOAL_CURRENT, 144, 2)
 
-
 def setup_rigid(handler):
     handler.setup_motor_register_mode(Motor_ids['shoulder_tilt'], ADDR_OPERATING_MODE, 3, 1)  # Complaint mode
     handler.setup_motor_register_mode(Motor_ids['elbow_tilt'], ADDR_OPERATING_MODE, 3, 1)  # Complaint mode
