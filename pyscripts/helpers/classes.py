@@ -190,6 +190,9 @@ class MotorClamp(Observer):
 
     def cleanup_motor_list(self, dxl_id_list):
         [self.cleanup_motor(dxl_id) for dxl_id in dxl_id_list]
+        # Close port
+        self.portHandler.closePort()
+        return
 
     def cleanup_motor(self, dxl_id):
         # Disable Dynamixel Torque
@@ -198,9 +201,6 @@ class MotorClamp(Observer):
             print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
         elif dxl_error != 0:
             print("%s" % self.packetHandler.getRxPacketError(dxl_error))
-
-        # Close port
-        self.portHandler.closePort()
 
     def move_motor_to_goal(self, dxl_id, goal, tolerance=DXL_MOVING_STATUS_THRESHOLD):
         # Write goal position
