@@ -174,5 +174,5 @@ def test_motor_registers():
 if __name__ == '__main__':
     #test_sensors()
     #test_motors()
-    test_motor_registers()
-    #main()
+    #test_motor_registers()
+    main()
