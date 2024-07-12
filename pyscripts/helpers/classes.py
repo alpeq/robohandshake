@@ -377,7 +377,7 @@ class MotorClamp(Observer):
         return condition
 
     def setup_motor_register_mode(self, dxl_id, address, value):
-        dxl_comm_result, dxl_error = self.packetHandler.write4ByteTxRx(self.portHandler, dxl_id, address,
+        dxl_comm_result, dxl_error = self.packetHandler.write1ByteTxRx(self.portHandler, dxl_id, address,
                                                                        value)
         if dxl_comm_result != COMM_SUCCESS:
             print("%s" % self.packetHandler.getTxRxResult(dxl_comm_result))
