@@ -359,7 +359,7 @@ class MotorClamp(Observer):
 
     def setup_motor_register_mode(self, dxl_id, address, value, n_bytes):
         if n_bytes == 1:
-                dxl_comm_result, dxl_error = self.packetHandler.write1ByteTxRx(self.portHandler, dxl_id, address,
+                dxl_comm_result, dxl_error = self.packetHandler.write1ByteTx(self.portHandler, dxl_id, address,
                                                                        value)
         elif n_bytes == 2:
                 dxl_comm_result, dxl_error = self.packetHandler.write2ByteTxRx(self.portHandler, dxl_id, address,
