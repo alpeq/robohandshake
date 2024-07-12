@@ -14,10 +14,17 @@ def wait_user_feedback():
     return False
 
 def handshake_protocol_tactile(handmotor_sub, wait_user=False):
+    t1 = datetime.today().timestamp()
     handmotor_sub.move_motor_to_goal(Motor_ids['gripper'], Grip_open)
+    t2 = datetime.today().timestamp()
+    logging.info("GRIP - Total Diff (s): {}".format(t2 - t1))
+
     print("REACHING: GIVE ME THAT HAND ")
     # Wait until somebody grab the hand -  side or palm in state 1 or 2
     handmotor_sub.wait_til_condition([Side, Palm], [1, 2, 3, 4, 5])
+    t2 = datetime.today().timestamp()
+    logging.info("Contact - Total Diff (s): {}".format(t2 - t1))
+
     print("CONTACT - Activated Side/Palm - Gripper closing - I grab you yours")
     # Close the hand until touch in thumb
     print("CONTACT - Activated Thumb - Shaking")
@@ -25,18 +32,30 @@ def handshake_protocol_tactile(handmotor_sub, wait_user=False):
     setup_compliance(handmotor_sub)
     shaking_phase(handmotor_sub, tactile=True)
     print("CONTACT - No Movement - Rapport LOOK AT EYES/ Message ...")
+    t2 = datetime.today().timestamp()
+    logging.info("SHAKING - Total Diff (s): {}".format(t2 - t1))
+
     # Open hand to init
     print("RETURN: Release me, otherwise no return!")
     handmotor_sub.wait_til_condition([Side], [0, 1, 2, 3], debug=False)
-    time.sleep(0.52)
+    time.sleep(0.22)
+    t2 = datetime.today().timestamp()
+    logging.info("NOMOVE - Total Diff (s): {}".format(t2 - t1))
+
     print("RETURN: Gripper To Open Position: My pleasure!")
     opengrip_2dof_thumb(handmotor_sub)
+    t2 = datetime.today().timestamp()
+    logging.info("TOTAL - Total Diff (s): {}".format(t2 - t1))
+
     return
 
 def handshake_protocol_time(handmotor_sub, wait_user=False):
+    t1 = datetime.today().timestamp()
     handmotor_sub.move_motor_to_goal(Motor_ids['gripper'], Grip_open)
     print("REACHING: GIVE ME THAT HAND ")
     time.sleep(0.5)
+    t2 = datetime.today().timestamp()
+    logging.info("GRIP - Total Diff (s): {}".format(t2 - t1))
     #_ = wait_user_feedback() if wait_user else ''
     print("CONTACT - I grab you yours and shake")
     # Close the hand until touch in thumb
@@ -46,9 +65,18 @@ def handshake_protocol_time(handmotor_sub, wait_user=False):
     setup_compliance(handmotor_sub)
     shaking_phase(handmotor_sub, tactile=False, osci_points=5)
     print("CONTACT - No Movement - Rapport LOOK AT EYES/ Message ...")
+    t2 = datetime.today().timestamp()
+    logging.info("SHAKE - Total Diff (s): {}".format(t2 - t1))
+
     time.sleep(0.52)
+    t2 = datetime.today().timestamp()
+    logging.info("NO-MOVE - Total Diff (s): {}".format(t2 - t1))
+
     print("RETURN: Gripper To Open Position: My pleasure!")
     opengrip_2dof_thumb(handmotor_sub)
+    t2 = datetime.today().timestamp()
+    logging.info("TOTAL - Total Diff (s): {}".format(t2 - t1))
+
     return
 
 def handshake_protocol_passive(handmotor_sub, wait_user=False):
@@ -57,6 +85,7 @@ def handshake_protocol_passive(handmotor_sub, wait_user=False):
     setup_high_compliance(handmotor_sub)
     time.sleep(10.52)
     t2 = datetime.today().timestamp()#datetime.strptime(datetime.now(), "%H:%M:%S")
+    setup_rigid(handmotor_sub)
     logging.info("Total Diff (s): {}".format(t2-t1))
     return
 
@@ -119,6 +148,7 @@ def main():
         return
     arm_retract_return(handmotor_sub)
     arm_closedown_position(handmotor_sub)
+
     print("****************************************\n")
     #      "DO YOU WANT MORE? \n")
     wait_user_feedback()
